@@ -1,10 +1,10 @@
 package com.example.wms.wms.controllers;
 
 import com.example.wms.wms.entities.BatchEntity;
-import com.example.wms.wms.entities.PalletEntity;
+import com.example.wms.wms.entities.ContainerEntity;
 import com.example.wms.wms.entities.ProductEntity;
 import com.example.wms.wms.repositories.BatchRepository;
-import com.example.wms.wms.repositories.PalletRepository;
+import com.example.wms.wms.repositories.ContainerRepository;
 import com.example.wms.wms.repositories.ProductRepository;
 import io.swagger.annotations.Api;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +21,10 @@ import java.util.List;
 @RequestMapping(value = "batch")
 public class BatchController {
     final ProductRepository productRepository;
-    final PalletRepository palletRepository;
+    final ContainerRepository palletRepository;
     final BatchRepository batchRepository;
 
-    public BatchController(ProductRepository productRepository, PalletRepository palletRepository, BatchRepository batchRepository) {
+    public BatchController(ProductRepository productRepository, ContainerRepository palletRepository, BatchRepository batchRepository) {
         this.productRepository = productRepository;
         this.palletRepository = palletRepository;
         this.batchRepository = batchRepository;
@@ -39,15 +39,15 @@ public class BatchController {
 
         ProductEntity productEntity = productRepository.getOne(id_product);
 
-        List<PalletEntity> list = palletRepository.getPalletsByProductId(id_product);
-        list.sort(new Comparator<PalletEntity>() {
+        List<ContainerEntity> list = palletRepository.getPalletsByProductId(id_product);
+        list.sort(new Comparator<ContainerEntity>() {
             @Override
-            public int compare(PalletEntity o1, PalletEntity o2) {
+            public int compare(ContainerEntity o1, ContainerEntity o2) {
                 return o2.getCount_product() - o1.getCount_product();
             }
         });
 
-        for (PalletEntity entity : list) {
+        for (ContainerEntity entity : list) {
             if (entity.getCount_product() <= count && entity.getBatch_id() == null) {
                 count -= entity.getCount_product();
 

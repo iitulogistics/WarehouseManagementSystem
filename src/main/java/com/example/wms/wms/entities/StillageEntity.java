@@ -24,6 +24,6 @@ public class StillageEntity {
 	double length;
 	@Column(name = "stillage_max_weight")
 	double 	max_weight;
-	@Column(name = "stillage_max_count_pallet")
-	int max_count_pallet;
+	@Column(name = "stillage_max_count_object")
+	int max_count_object;
 }

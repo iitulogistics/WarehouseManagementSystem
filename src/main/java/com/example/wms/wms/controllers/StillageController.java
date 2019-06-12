@@ -32,7 +32,7 @@ public class StillageController {
 
 	@PostMapping("/add")
 	public void addStillage(@RequestBody StillageEntity stillageEntity){
-		stillageEntity.setMax_count_pallet((int) ((stillageEntity.getLength() / pallet_length) *
+		stillageEntity.setMax_count_object((int) ((stillageEntity.getLength() / pallet_length) *
 				(int)(stillageEntity.getWidth() / pallet_width)));
 		repository.save(stillageEntity);
 	}
