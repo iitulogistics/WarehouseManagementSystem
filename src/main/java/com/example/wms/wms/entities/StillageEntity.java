@@ -1,8 +1,10 @@
 package com.example.wms.wms.entities;
 
+import com.example.wms.wms.base.BaseType;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Data
 @Entity
@@ -26,4 +28,9 @@ public class StillageEntity {
 	double 	max_weight;
 	@Column(name = "stillage_max_count_object")
 	int max_count_object;
+
+
+	@ElementCollection(targetClass = BaseType.TypeProduct.class)
+	@Enumerated(EnumType.STRING)
+	Collection<BaseType.TypeProduct> typeProduct;
 }

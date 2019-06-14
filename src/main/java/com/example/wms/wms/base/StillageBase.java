@@ -8,7 +8,7 @@ public abstract class StillageBase {
     double length, height, width;
     double stillageNum, level, cell;
     BaseType.TypeProduct typeProduct;
-    BaseType.TypeStillage typeStillage;
+    //BaseType.TypeStillage typeStillage;
 
     public abstract int disProduct();
 }

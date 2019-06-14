@@ -8,8 +8,10 @@ import com.example.wms.wms.repositories.ContainerRepository;
 import com.example.wms.wms.repositories.ProductRepository;
 import com.example.wms.wms.repositories.StillageRepository;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,7 +25,7 @@ import java.util.List;
 public class ReceiptProductController {
 
     final ProductRepository productRepository;
-    final ContainerRepository palletRepository;
+    final ContainerRepository containerRepository;
     final StillageRepository stillageRepository;
 
     @Value("${standard.pallet.length}")
@@ -37,25 +39,28 @@ public class ReceiptProductController {
 
 
     @Autowired
-    public ReceiptProductController(ProductRepository productRepository, ContainerRepository palletRepository, StillageRepository stillageRepository) {
+    public ReceiptProductController(ProductRepository productRepository, ContainerRepository containerRepository, StillageRepository stillageRepository) {
         this.productRepository = productRepository;
-        this.palletRepository = palletRepository;
+        this.containerRepository = containerRepository;
         this.stillageRepository = stillageRepository;
     }
 
+    @ApiOperation("Добавить продукт для дальнейшей упаковки в паллет")
     @PostMapping("/addOneProductForPallet")
-    public void addOneProductForPallet(@RequestParam(name = "id_product") long id_product) {
+    public ResponseEntity<?> addOneProductForPallet(@RequestParam(name = "id_product") long id_product) {
         ProductEntity productEntity = productRepository.getOne(id_product);
         productRepository.updateById(id_product, productEntity.getCount_on_shipping(),
                 productEntity.getCount_on_warehouse() + 1);
+        return ResponseEntity.ok("Продукт добавлен в базу без контейнера.");
     }
 
+    @ApiOperation("Добавить коробку")
     @PostMapping("/addBox")
-    public void addBox(@RequestParam(name = "id_product") long id_product,
-                       @RequestParam(name = "height") double height,
-                       @RequestParam(name = "width") double width,
-                       @RequestParam(name = "length") double length,
-                       @RequestParam(name = "count") int count) {
+    public ResponseEntity<?> addBox(@RequestParam(name = "id_product") long id_product,
+                                    @RequestParam(name = "height") double height,
+                                    @RequestParam(name = "width") double width,
+                                    @RequestParam(name = "length") double length,
+                                    @RequestParam(name = "count") int count) {
         ProductEntity productEntity = productRepository.getOne(id_product);
 
         ContainerEntity box = new ContainerEntity();
@@ -65,62 +70,77 @@ public class ReceiptProductController {
         box.setLength(length);
         box.setProduct_id(id_product);
         box.setCount_product(count);
-//        box.setTypeContainer(BaseType.TypeContainerProduct.box);
+        box.setCount_product(count);
+        box.setLifeCycle(BaseType.LifeCycle.receipt);
+        box.setTypeContainer(BaseType.TypeContainerProduct.box);
 
-        distribution(box, id_product);
+        boolean isDistribution = distribution(box, id_product);
 
         productRepository.updateById(id_product, productEntity.getCount_on_shipping(),
                 productEntity.getCount_on_warehouse() + count);
+        if (isDistribution) {
+            return ResponseEntity.ok("Коробка добавлена в базу.\nБыло найдено место для хранения");
+        } else {
+            return ResponseEntity.ok("Коробка добавлена в базу.\nНе было найдено место для хранения");
+        }
     }
 
+    @ApiOperation("Добавить паллет")
     @PostMapping("/addPallet")
-    public void addPallet(@RequestParam long id_product,
-                          @RequestParam int count_product,
-                          @RequestParam double height) {
+    public ResponseEntity<?> addPallet(@RequestParam long id_product,
+                                       @RequestParam int count_product,
+                                       @RequestParam double height) {
         ProductEntity productEntity = productRepository.getOne(id_product);
         productEntity.setCount_on_warehouse(productEntity.getCount_on_warehouse() + count_product);
 
-        makePallet(id_product, count_product, height);
+
+        return makePallet(id_product, count_product, height);
     }
 
-
+    @ApiOperation("Упаковать продукты в паллет")
     @PostMapping("/makePallet")
-    public void makePallet(@RequestParam long id_product,
-                           @RequestParam int count_product,
-                           @RequestParam double height) {
+    public ResponseEntity<?> makePallet(@RequestParam long id_product,
+                                        @RequestParam int count_product,
+                                        @RequestParam double height) {
         ProductEntity productEntity = productRepository.getOne(id_product);
 
         ContainerEntity pallet = new ContainerEntity();
         pallet.setCount_product(count_product);
         pallet.setProduct_id(id_product);
-//        pallet.setTypeContainer(BaseType.TypeContainerProduct.pallet);
+        pallet.setTypeContainer(BaseType.TypeContainerProduct.pallet);
         pallet.setHeight(height + standard_height);
         pallet.setWeight(productEntity.getWeight() * count_product);
+        pallet.setLifeCycle(BaseType.LifeCycle.receipt);
 
         //Стандартный размер палеты 1000мм на 1200мм
         pallet.setLength(standard_length);
         pallet.setWidth(standard_width);
         //Распределение палета
-        distribution(pallet, id_product);
+        if (distribution(pallet, id_product)) {
+            return ResponseEntity.ok("Паллет добавлена в базу.\nБыло найдено место для хранения");
+        } else {
+            return ResponseEntity.ok("Паллет добавлена в базу.\nНе было найдено место для хранения.\n");
+        }
     }
 
-    private void distribution(ContainerEntity container, long product_id) {
+    private boolean distribution(ContainerEntity container, long product_id) {
         List<StillageEntity> stillages = stillageRepository.findAll();
 
         for (StillageEntity stillage : stillages) {
-            List<ContainerEntity> palletEntities = palletRepository.getPalletsByStillageId(stillage.getId());
+            List<ContainerEntity> palletEntities = containerRepository.getPalletsByStillageId(stillage.getId());
 
             if (palletEntities.size() < stillage.getMax_count_object() && !palletEntities.isEmpty()) {
                 if (palletEntities.get(0).getProduct_id() == product_id) {
                     container.setStillageId(stillage.getId());
-                    palletRepository.save(container);
-                    return;
+                    container.setLifeCycle(BaseType.LifeCycle.distribution);
+                    containerRepository.save(container);
+                    return true;
                 }
             }
         }
 
         for (StillageEntity stillage : stillages) {
-            List<ContainerEntity> palletEntities = palletRepository.getPalletsByStillageId(stillage.getId());
+            List<ContainerEntity> palletEntities = containerRepository.getPalletsByStillageId(stillage.getId());
 
             if (palletEntities.isEmpty()) {
                 if (stillage.getWidth() >= container.getWidth() &&
@@ -133,12 +153,14 @@ public class ReceiptProductController {
                             (int) (stillage.getMax_weight() / container.getWeight()));
 
                     stillageRepository.updateMaxCountObject(stillage.getId(), max_count_object);
-
+                    container.setLifeCycle(BaseType.LifeCycle.distribution);
                     container.setStillageId(stillage.getId());
-                    palletRepository.save(container);
-                    return;
+                    containerRepository.save(container);
+                    return true;
                 }
             }
         }
+        containerRepository.save(container);
+        return false;
     }
 }

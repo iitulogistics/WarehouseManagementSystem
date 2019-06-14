@@ -7,6 +7,7 @@ import com.example.wms.wms.repositories.BatchRepository;
 import com.example.wms.wms.repositories.ContainerRepository;
 import com.example.wms.wms.repositories.ProductRepository;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +31,7 @@ public class BatchController {
         this.batchRepository = batchRepository;
     }
 
+    @ApiOperation("Создать batch")
     @PostMapping("/addBatch")
     public ResponseEntity<?> addBatch(@RequestParam Long id_product,
                                       @RequestParam int count) {
@@ -54,7 +56,7 @@ public class BatchController {
                 int count_shipping = productEntity.getCount_on_shipping() + entity.getCount_product();
                 int count_warehouse = productEntity.getCount_on_warehouse() - entity.getCount_product();
                 productRepository.updateById(id_product,count_shipping,count_warehouse);
-                palletRepository.updateById(entity.getId(), batchEntity.getId());
+                palletRepository.updateBatchById(entity.getId(), batchEntity.getId());
             }
         }
         return ResponseEntity.ok("Партия сформирована и готова к отправке " + batchEntity.getId());

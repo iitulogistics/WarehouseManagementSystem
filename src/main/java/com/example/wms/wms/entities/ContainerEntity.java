@@ -4,7 +4,6 @@ import com.example.wms.wms.base.BaseType;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Collection;
 
 @Data
 @Entity
@@ -29,10 +28,14 @@ public class ContainerEntity {
     @Column(name = "weight")
     double weight;
 
-    @ElementCollection(targetClass = BaseType.TypeContainerProduct.class)
+
     //@ElementCollection(targetClass = BaseType.TypeContainerProduct.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "tblTypeContainerProduct", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "type_container")
+    //@CollectionTable(name = "tblTypeContainerProduct", joinColumns = @JoinColumn(name = "id"))
+    //@Column(name = "type_container")
+    //@ElementCollection(targetClass = BaseType.TypeContainerProduct.class)
     @Enumerated(EnumType.STRING)
-    Collection<BaseType.TypeContainerProduct> typeContainer;
+    BaseType.TypeContainerProduct typeContainer;
+
+    @Enumerated(EnumType.STRING)
+    BaseType.LifeCycle lifeCycle;
 }

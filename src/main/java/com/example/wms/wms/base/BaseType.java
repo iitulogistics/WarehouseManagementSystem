@@ -7,14 +7,22 @@ public class BaseType {
         technics
     }
 
-    public enum TypeStillage {
-        fragile,
-        food,
-        technics
-    }
-
-    public enum TypeContainerProduct{
+    public enum TypeContainerProduct {
         pallet,
         box
+    }
+
+    public enum LifeCycle {
+        //Поступление
+        receipt,
+
+        //Распределение
+        distribution,
+
+        //Хранение
+        storage,
+
+        //Отправка
+        shipping
     }
 }

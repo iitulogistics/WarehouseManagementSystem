@@ -28,12 +28,10 @@ public class ProductEntity {
 	@Column(name = "product_weight")
 	double weight;
 
-	@ElementCollection(targetClass = BaseType.TypeProduct.class, fetch = FetchType.EAGER)
+	//@ElementCollection(targetClass = BaseType.TypeProduct.class, fetch = FetchType.EAGER)
 	@Enumerated(EnumType.STRING)
-
-
-	@Column(name = "type_product")
-	String type_product;
+	//@Column(name = "type_product")
+	BaseType.TypeProduct type_product;
 
 	@Column(name = "product_qr_code")
 	String qr_code;
