@@ -24,9 +24,9 @@ import java.util.List;
 @RequestMapping("receipt")
 public class ReceiptProductController {
 
-    final ProductRepository productRepository;
-    final ContainerRepository containerRepository;
-    final StillageRepository stillageRepository;
+    private final ProductRepository productRepository;
+    private final ContainerRepository containerRepository;
+    private final StillageRepository stillageRepository;
 
     @Value("${standard.pallet.length}")
     double standard_length;
@@ -53,6 +53,12 @@ public class ReceiptProductController {
                 productEntity.getCount_on_warehouse() + 1);
         return ResponseEntity.ok("Продукт добавлен в базу без контейнера.");
     }
+
+//    @ApiOperation("Бракованый товар")
+//    @PostMapping("/addDefectiveProduct")
+//    public ResponseEntity<?> addDefectiveProduct() {
+//        return ResponseEntity.ok("Продукт добавлен в базу без контейнера.");
+//    }
 
     @ApiOperation("Добавить коробку")
     @PostMapping("/addBox")
@@ -91,8 +97,9 @@ public class ReceiptProductController {
                                        @RequestParam int count_product,
                                        @RequestParam double height) {
         ProductEntity productEntity = productRepository.getOne(id_product);
-        productEntity.setCount_on_warehouse(productEntity.getCount_on_warehouse() + count_product);
 
+        productRepository.updateById(id_product, productEntity.getCount_on_shipping(),
+                productEntity.getCount_on_warehouse() + count_product);
 
         return makePallet(id_product, count_product, height);
     }
@@ -127,7 +134,7 @@ public class ReceiptProductController {
         List<StillageEntity> stillages = stillageRepository.findAll();
 
         for (StillageEntity stillage : stillages) {
-            List<ContainerEntity> palletEntities = containerRepository.getPalletsByStillageId(stillage.getId());
+            List<ContainerEntity> palletEntities = containerRepository.getContainersByStillageId(stillage.getId());
 
             if (palletEntities.size() < stillage.getMax_count_object() && !palletEntities.isEmpty()) {
                 if (palletEntities.get(0).getProduct_id() == product_id) {
@@ -140,7 +147,7 @@ public class ReceiptProductController {
         }
 
         for (StillageEntity stillage : stillages) {
-            List<ContainerEntity> palletEntities = containerRepository.getPalletsByStillageId(stillage.getId());
+            List<ContainerEntity> palletEntities = containerRepository.getContainersByStillageId(stillage.getId());
 
             if (palletEntities.isEmpty()) {
                 if (stillage.getWidth() >= container.getWidth() &&
