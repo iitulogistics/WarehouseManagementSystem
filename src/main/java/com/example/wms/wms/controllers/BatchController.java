@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Comparator;
 import java.util.List;
 
-@Api(tags = {"Заказ"}, description = "API для заказа товара со складе")
+@Api(tags = {"Заказ"}, description = "API для заказа товара со склада")
 @RestController
 @RequestMapping(value = "batch")
 public class BatchController {
@@ -34,14 +34,26 @@ public class BatchController {
     @ApiOperation("Создать batch")
     @PostMapping("/addBatch")
     public ResponseEntity<?> addBatch(@RequestParam Long id_product,
-                                      @RequestParam int count) {
-        BatchEntity batchEntity = new BatchEntity();
-        batchEntity.setProduct_count(count);
-        batchRepository.save(batchEntity);
-
+                                      @RequestParam int count,
+                                      @RequestParam String company_name) {
+        //Проверка возможнасти создать batch. Если товара недостатачно прекращаем создание batch.
         ProductEntity productEntity = productRepository.getOne(id_product);
 
-        List<ContainerEntity> list = palletRepository.getPalletsByProductId(id_product);
+        if(productEntity.getCount_on_warehouse() < count){
+            return ResponseEntity.ok("Недостаточно товара на складе");
+        }
+
+        //Если уже есть batch уже созданый для данной компании, то загружаем продукты в этот batch.
+        //Иначе создаем новый.
+        BatchEntity batchEntity = batchRepository.getBatchByCompanyName(company_name);
+        if (batchEntity == null) {
+            batchEntity = new BatchEntity();
+            batchEntity.setCompany_name(company_name);
+            batchRepository.save(batchEntity);
+        }
+
+
+        List<ContainerEntity> list = palletRepository.getContainersByProductId(id_product);
         list.sort(new Comparator<ContainerEntity>() {
             @Override
             public int compare(ContainerEntity o1, ContainerEntity o2) {
@@ -55,7 +67,7 @@ public class BatchController {
 
                 int count_shipping = productEntity.getCount_on_shipping() + entity.getCount_product();
                 int count_warehouse = productEntity.getCount_on_warehouse() - entity.getCount_product();
-                productRepository.updateById(id_product,count_shipping,count_warehouse);
+                productRepository.updateById(id_product, count_shipping, count_warehouse);
                 palletRepository.updateBatchById(entity.getId(), batchEntity.getId());
             }
         }

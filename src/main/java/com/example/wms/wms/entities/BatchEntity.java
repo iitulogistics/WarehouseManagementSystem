@@ -11,8 +11,8 @@ public class BatchEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
-    @Column(name = "product_count")
-    int product_count;
+    @Column(name = "company_name")
+    String company_name;
 //    @Column(name = "delivery_address")
 //    String delivery_address;
     @Column(name = "delivery_date")
