@@ -4,6 +4,7 @@ import com.example.wms.wms.base.BaseType;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @Entity
@@ -27,6 +28,8 @@ public class ProductEntity {
 	double length;
 	@Column(name = "product_weight")
 	double weight;
+	@Column(name = "shelf_life")
+	Date date;
 
 	//@ElementCollection(targetClass = BaseType.TypeProduct.class, fetch = FetchType.EAGER)
 	@Enumerated(EnumType.STRING)
