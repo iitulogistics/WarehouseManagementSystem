@@ -13,6 +13,7 @@ public class BaseType {
     }
 
     public enum LifeCycle {
+        defective,
         //Поступление
         receipt,
 
@@ -24,5 +25,18 @@ public class BaseType {
 
         //Отправка
         shipping
+    }
+
+    public enum PriorityOfExecution {
+        low,
+
+        midle,
+
+        hight
+    }
+
+    public enum StageOfExecution{
+        inProgress,
+        done
     }
 }
