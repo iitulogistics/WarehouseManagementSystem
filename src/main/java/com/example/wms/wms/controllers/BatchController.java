@@ -1,11 +1,8 @@
 package com.example.wms.wms.controllers;
 
-import com.example.wms.wms.entities.BatchEntity;
-import com.example.wms.wms.entities.ContainerEntity;
-import com.example.wms.wms.entities.ProductEntity;
-import com.example.wms.wms.repositories.BatchRepository;
-import com.example.wms.wms.repositories.ContainerRepository;
-import com.example.wms.wms.repositories.ProductRepository;
+import com.example.wms.wms.base.BaseType;
+import com.example.wms.wms.entities.*;
+import com.example.wms.wms.repositories.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
@@ -15,20 +12,29 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 @Api(tags = {"Заказ"}, description = "API для заказа товара со склада")
 @RestController
-@RequestMapping(value = "batch")
+@RequestMapping(value = "/batch")
 public class BatchController {
-    final ProductRepository productRepository;
-    final ContainerRepository palletRepository;
-    final BatchRepository batchRepository;
+    private final ProductRepository productRepository;
+    private final ContainerRepository palletRepository;
+    private final BatchRepository batchRepository;
+    private final TaskRepository taskRepository;
+    private final StillageRepository stillageRepository;
 
-    public BatchController(ProductRepository productRepository, ContainerRepository palletRepository, BatchRepository batchRepository) {
+    public BatchController(ProductRepository productRepository,
+                           ContainerRepository palletRepository,
+                           BatchRepository batchRepository,
+                           TaskRepository taskRepository,
+                           StillageRepository stillageRepository) {
         this.productRepository = productRepository;
         this.palletRepository = palletRepository;
         this.batchRepository = batchRepository;
+        this.taskRepository = taskRepository;
+        this.stillageRepository = stillageRepository;
     }
 
     @ApiOperation("Создать batch")
@@ -39,7 +45,7 @@ public class BatchController {
         //Проверка возможнасти создать batch. Если товара недостатачно прекращаем создание batch.
         ProductEntity productEntity = productRepository.getOne(id_product);
 
-        if(productEntity.getCount_on_warehouse() < count){
+        if (productEntity.getCount_on_warehouse() < count) {
             return ResponseEntity.ok("Недостаточно товара на складе");
         }
 
@@ -61,6 +67,11 @@ public class BatchController {
             }
         });
 
+        TaskEntity taskEntity = new TaskEntity();
+        taskEntity.setPriority(BaseType.PriorityOfExecution.midle);
+        taskEntity.setCreated(new Date());
+
+
         for (ContainerEntity entity : list) {
             if (entity.getCount_product() <= count && entity.getBatch_id() == null) {
                 count -= entity.getCount_product();
@@ -69,8 +80,16 @@ public class BatchController {
                 int count_warehouse = productEntity.getCount_on_warehouse() - entity.getCount_product();
                 productRepository.updateById(id_product, count_shipping, count_warehouse);
                 palletRepository.updateBatchById(entity.getId(), batchEntity.getId());
+
+                StillageEntity stillageEntity = stillageRepository.getOne(entity.getStillageId());
+
+                taskEntity.setTask(taskEntity.getTask() + "Взять контейнер с id = " + entity.getId() + " " +
+                        "со стиложа " + stillageEntity.getStillage_index() + ", и ячейки " +
+                        stillageEntity.getShelf_index() + "\n");
             }
         }
+        taskEntity.setTask(taskEntity.getTask() + " Упаковать все в batch с id = " + batchEntity.getId());
+        taskRepository.save(taskEntity);
         return ResponseEntity.ok("Партия сформирована и готова к отправке " + batchEntity.getId());
     }
 }

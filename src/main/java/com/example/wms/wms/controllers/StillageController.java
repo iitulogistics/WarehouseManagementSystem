@@ -44,19 +44,17 @@ public class StillageController {
 
 	@ApiOperation("Добавить стилаж")
 	@PostMapping("/addStillageByRequests")
-	public ResponseEntity<?> addStillage(@RequestParam int column,
-										 @RequestParam int row,
-										 @RequestParam int shelf,
+	public ResponseEntity<?> addStillage(@RequestParam int stillage_index,
+										 @RequestParam int shelf_index,
 										 @RequestParam double width,
 										 @RequestParam double height,
 										 @RequestParam double length,
 										 @RequestParam double max_weight,
 										 @RequestParam Collection<BaseType.TypeProduct> products){
 		StillageEntity stillageEntity = new StillageEntity();
-		stillageEntity.setColumn(column);
-		stillageEntity.setRow(row);
-		stillageEntity.setShelf(shelf);
 		stillageEntity.setWidth(width);
+		stillageEntity.setStillage_index(stillage_index);
+		stillageEntity.setStillage_index(shelf_index);
 		stillageEntity.setHeight(height);
 		stillageEntity.setLength(length);
 		stillageEntity.setMax_weight(max_weight);

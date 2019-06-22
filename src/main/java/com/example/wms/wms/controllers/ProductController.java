@@ -11,7 +11,7 @@ import java.util.List;
 
 @Api(tags = {"Товары"}, description = "API для товара на складе")
 @RestController
-@RequestMapping(value = "product")
+@RequestMapping(value = "/product")
 public class ProductController {
 
 	private final ProductRepository repository;

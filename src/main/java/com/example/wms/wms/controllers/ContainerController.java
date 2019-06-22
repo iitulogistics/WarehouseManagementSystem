@@ -10,18 +10,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Api(tags = {"Паллеты"}, description = "API для паллетов на складе")
+@Api(tags = {"Контейнеры"}, description = "API для котейнеров на складе")
 @RestController
-@RequestMapping(value = "pallet")
-public class PalletController {
+@RequestMapping(value = "/container")
+public class ContainerController {
 
     final ContainerRepository palletRepository;
 
-    public PalletController(ContainerRepository palletRepository) {
+    public ContainerController(ContainerRepository palletRepository) {
         this.palletRepository = palletRepository;
     }
 
-    @ApiOperation("Показать список паллетов")
+    @ApiOperation("Показать список контейнеров")
     @PostMapping("all")
     public List<ContainerEntity> getAll(){
         return palletRepository.findAll();

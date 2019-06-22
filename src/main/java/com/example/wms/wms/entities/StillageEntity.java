@@ -12,12 +12,10 @@ public class StillageEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	Long id;
-	@Column(name = "row_position")
-	int row;
-	@Column(name = "column_position")
-	int column;
-	@Column(name = "shelf_position")
-	int shelf;
+	@Column(name = "stillage_index")
+	int stillage_index;
+	@Column(name = "shelf_index")
+	int shelf_index;
 	@Column(name = "stillige_width")
 	double width;
 	@Column(name = "stillage_height")

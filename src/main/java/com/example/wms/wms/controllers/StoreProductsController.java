@@ -3,8 +3,10 @@ package com.example.wms.wms.controllers;
 import com.example.wms.wms.base.BaseType;
 import com.example.wms.wms.entities.ContainerEntity;
 import com.example.wms.wms.entities.StillageEntity;
+import com.example.wms.wms.entities.TaskEntity;
 import com.example.wms.wms.repositories.ContainerRepository;
 import com.example.wms.wms.repositories.StillageRepository;
+import com.example.wms.wms.repositories.TaskRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 
 @Api(tags = {"Хранение"}, description = "API контроля товара на складе")
@@ -20,10 +23,14 @@ import java.util.List;
 public class StoreProductsController {
     private final ContainerRepository containerRepository;
     private final StillageRepository stillageRepository;
+    private final TaskRepository taskRepository;
 
-    public StoreProductsController(ContainerRepository containerRepository, StillageRepository stillageRepository) {
+    public StoreProductsController(ContainerRepository containerRepository,
+                                   StillageRepository stillageRepository,
+                                   TaskRepository taskRepository) {
         this.containerRepository = containerRepository;
         this.stillageRepository = stillageRepository;
+        this.taskRepository = taskRepository;
     }
 
     @ApiOperation("Вывод списка товаров находяшихся на этапе распределения")
@@ -58,6 +65,10 @@ public class StoreProductsController {
         StringBuilder info = new StringBuilder();
         List<StillageEntity> stillageEntities = stillageRepository.findAll();
 
+        TaskEntity taskEntity = new TaskEntity();
+        taskEntity.setCreated(new Date());
+        taskEntity.setPriority(BaseType.PriorityOfExecution.midle);
+
         for (int i = 0; i < stillageEntities.size() - 1; i++) {
             List<ContainerEntity> containerEntities = containerRepository
                     .getContainersByStillageId(stillageEntities.get(i).getId());
@@ -78,6 +89,13 @@ public class StoreProductsController {
                     if (dif >= 0) {
                         if (containerEntities.size() >= containerEntities2.size()) {
                             for (ContainerEntity containerEntity : containerEntities2) {
+
+                                taskEntity.setTask(taskEntity.getTask() + "Контейнер с id = " +
+                                        containerEntity.getId() + "Переместить из стилажа с номером " + stillageEntities.get(j).getStillage_index() +
+                                        " и ячейки " + stillageEntities.get(j).getShelf_index() +
+                                        " в стилаж " + stillageEntities.get(i).getStillage_index() +
+                                        " и ячейку " + stillageEntities.get(i).getShelf_index() + "\n");
+
                                 containerRepository.updateLifeCyrcleAndStillageById(containerEntity.getId(),
                                         BaseType.LifeCycle.distribution, stillageEntities.get(i).getId());
                                 info.append("Контейнер с id = ").append(containerEntity.getId()).append(" был перемещен\n");
@@ -86,6 +104,14 @@ public class StoreProductsController {
                             for (ContainerEntity containerEntity : containerEntities) {
                                 containerRepository.updateLifeCyrcleAndStillageById(containerEntity.getId(),
                                         BaseType.LifeCycle.distribution, stillageEntities.get(j).getId());
+
+                                taskEntity.setTask(taskEntity.getTask() + "Контейнер с id = " +
+                                        containerEntity.getId() + "Переместить из стилажа с номером " +
+                                        stillageEntities.get(i).getStillage_index() +
+                                        " и ячейки " + stillageEntities.get(i).getShelf_index() +
+                                        " в стилаж " + stillageEntities.get(j).getStillage_index() +
+                                        " и ячейку " + stillageEntities.get(j).getShelf_index() + "\n");
+
                                 info.append("Контейнер с id = ").append(containerEntity.getId()).append(" был перемещен\n");
                             }
                         }
@@ -94,7 +120,12 @@ public class StoreProductsController {
 
             }
         }
-        return (info.length() == 0 ? ResponseEntity.ok("Склад уже оптимизирован") : ResponseEntity.ok(info));
+        if (info.length() == 0) {
+            return ResponseEntity.ok("Склад уже оптимизирован");
+        } else {
+            taskRepository.save(taskEntity);
+            return ResponseEntity.ok(info);
+        }
     }
 }
 

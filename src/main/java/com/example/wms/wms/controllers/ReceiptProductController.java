@@ -4,9 +4,11 @@ import com.example.wms.wms.base.BaseType;
 import com.example.wms.wms.entities.ContainerEntity;
 import com.example.wms.wms.entities.ProductEntity;
 import com.example.wms.wms.entities.StillageEntity;
+import com.example.wms.wms.entities.TaskEntity;
 import com.example.wms.wms.repositories.ContainerRepository;
 import com.example.wms.wms.repositories.ProductRepository;
 import com.example.wms.wms.repositories.StillageRepository;
+import com.example.wms.wms.repositories.TaskRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,7 @@ public class ReceiptProductController {
     private final ProductRepository productRepository;
     private final ContainerRepository containerRepository;
     private final StillageRepository stillageRepository;
+    private final TaskRepository taskRepository;
 
     @Value("${standard.pallet.length}")
     double standard_length;
@@ -39,10 +42,14 @@ public class ReceiptProductController {
 
 
     @Autowired
-    public ReceiptProductController(ProductRepository productRepository, ContainerRepository containerRepository, StillageRepository stillageRepository) {
+    public ReceiptProductController(ProductRepository productRepository,
+                                    ContainerRepository containerRepository,
+                                    StillageRepository stillageRepository,
+                                    TaskRepository taskRepository) {
         this.productRepository = productRepository;
         this.containerRepository = containerRepository;
         this.stillageRepository = stillageRepository;
+        this.taskRepository = taskRepository;
     }
 
     @ApiOperation("Добавить продукт для дальнейшей упаковки в паллет")
@@ -82,9 +89,19 @@ public class ReceiptProductController {
 
         boolean isDistribution = distribution(box, id_product);
 
+        StillageEntity stillageEntity = stillageRepository.getOne(box.getStillageId());
+
         productRepository.updateById(id_product, productEntity.getCount_on_shipping(),
                 productEntity.getCount_on_warehouse() + count);
+
+        TaskEntity taskEntity = new TaskEntity();
+        taskEntity.setPriority(BaseType.PriorityOfExecution.midle);
+
         if (isDistribution) {
+            taskEntity.setTask("Переместить коробку с id = " + box.getId() +
+                    " из зоны отгрузки в ячейку хранения (номер стиллажа - " + stillageEntity.getStillage_index() +
+                    " номер ячейки " + stillageEntity.getShelf_index() + ")");
+            taskRepository.save(taskEntity);
             return ResponseEntity.ok("Коробка добавлена в базу.\nБыло найдено место для хранения");
         } else {
             return ResponseEntity.ok("Коробка добавлена в базу.\nНе было найдено место для хранения");
@@ -123,7 +140,15 @@ public class ReceiptProductController {
         pallet.setLength(standard_length);
         pallet.setWidth(standard_width);
         //Распределение палета
+        TaskEntity taskEntity = new TaskEntity();
+        taskEntity.setPriority(BaseType.PriorityOfExecution.midle);
+
         if (distribution(pallet, id_product)) {
+            StillageEntity stillageEntity = stillageRepository.getOne(pallet.getStillageId());
+            taskEntity.setTask("Переместить паллет с id = " + pallet.getId() +
+                    " из зоны отгрузки в ячейку хранения (номер стиллажа " + stillageEntity.getStillage_index() +
+                    " номер ячейки " + stillageEntity.getShelf_index() + ")");
+            taskRepository.save(taskEntity);
             return ResponseEntity.ok("Паллет добавлена в базу.\nБыло найдено место для хранения");
         } else {
             return ResponseEntity.ok("Паллет добавлена в базу.\nНе было найдено место для хранения.\n");
