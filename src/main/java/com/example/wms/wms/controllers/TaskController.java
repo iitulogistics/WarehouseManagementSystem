@@ -30,7 +30,8 @@ public class TaskController {
     public List<TaskEntity> getAllCurrentTasks() {
         return taskRepository.getCurrentTasks();
     }
-    @PostMapping("/allCurrentTasks")
+
+    @PostMapping("/allDoneTasks")
     public List<TaskEntity> getAllDoneTasks() {
         return taskRepository.getDoneTasks();
     }

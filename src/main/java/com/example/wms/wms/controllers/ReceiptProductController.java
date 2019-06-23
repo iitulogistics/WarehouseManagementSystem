@@ -5,6 +5,7 @@ import com.example.wms.wms.entities.ContainerEntity;
 import com.example.wms.wms.entities.ProductEntity;
 import com.example.wms.wms.entities.StillageEntity;
 import com.example.wms.wms.entities.TaskEntity;
+import com.example.wms.wms.qr_code.QRCodeReader;
 import com.example.wms.wms.repositories.ContainerRepository;
 import com.example.wms.wms.repositories.ProductRepository;
 import com.example.wms.wms.repositories.StillageRepository;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Api(tags = {"Поступление товара"}, description = "API для Поступившего товара")
@@ -194,5 +197,23 @@ public class ReceiptProductController {
         }
         containerRepository.save(container);
         return false;
+    }
+
+    @ApiOperation("генерировать qr code")
+    @PostMapping("/generationQRCode")
+    public ResponseEntity<?> generationQRCode(String s) {
+        return ResponseEntity.ok(QRCodeReader.getQRCodeImage(s, 200, 200));
+    }
+
+
+    @ApiOperation("раскодировать qr code")
+    @PostMapping("/decodeQRCode")
+    public ResponseEntity<?> decodeQRCode(@RequestParam MultipartFile file)  {
+        try {
+            return ResponseEntity.ok(QRCodeReader.decodeQRCode(file));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(e.getMessage());
+        }
     }
 }

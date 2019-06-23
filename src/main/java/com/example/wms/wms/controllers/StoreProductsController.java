@@ -10,15 +10,13 @@ import com.example.wms.wms.repositories.TaskRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
 
 @Api(tags = {"Хранение"}, description = "API контроля товара на складе")
+@RequestMapping("/store")
 @RestController
 public class StoreProductsController {
     private final ContainerRepository containerRepository;
