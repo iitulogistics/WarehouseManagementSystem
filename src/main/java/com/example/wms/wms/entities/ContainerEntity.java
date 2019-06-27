@@ -23,8 +23,6 @@ public class ContainerEntity {
     double height;
     @Column(name = "product_length")
     double length;
-    @Column(name = "batch_id")
-    Long batch_id;
     @Column(name = "weight")
     double weight;
 

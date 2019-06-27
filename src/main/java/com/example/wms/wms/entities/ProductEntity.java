@@ -4,6 +4,7 @@ import com.example.wms.wms.base.BaseType;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Data
@@ -30,12 +31,29 @@ public class ProductEntity {
 	double weight;
 	@Column(name = "shelf_life")
 	Date date;
+	@Column(name = "price")
+	double price;
 
-	//@ElementCollection(targetClass = BaseType.TypeProduct.class, fetch = FetchType.EAGER)
 	@Enumerated(EnumType.STRING)
-	//@Column(name = "type_product")
 	BaseType.TypeProduct type_product;
 
 	@Column(name = "product_qr_code")
 	String qr_code;
+
+	public ProductEntity(){
+	}
+
+	public ProductEntity(Long id, String name, int count, double price){
+		this.Id = id;
+		this.product_name = name;
+		this.count_on_shipping = count;
+		this.price = price;
+	}
+
+	public String toString(){
+		return "Имя товара: " + product_name + "\n" +
+				"Ожидаемое время прибытия " + new SimpleDateFormat("dd.MM.yyyy").format(date) + "\n" +
+				"Суммарная цена товара " + price + " тг\n" +
+				"Кол-во " + count_expected+" шт.";
+	}
 }
