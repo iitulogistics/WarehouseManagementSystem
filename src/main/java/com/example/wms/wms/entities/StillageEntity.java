@@ -26,7 +26,8 @@ public class StillageEntity {
 	double 	max_weight;
 	@Column(name = "stillage_max_count_object")
 	int max_count_object;
-
+	@Column(name = "stillage_count_object")
+	int count_object;
 
 	@ElementCollection(targetClass = BaseType.TypeProduct.class)
 	@Enumerated(EnumType.STRING)
