@@ -54,20 +54,20 @@ public class StillageController {
 		StillageEntity stillageEntity = new StillageEntity();
 		stillageEntity.setWidth(width);
 		stillageEntity.setStillage_index(stillage_index);
-		stillageEntity.setStillage_index(shelf_index);
+		stillageEntity.setShelf_index(shelf_index);
 		stillageEntity.setHeight(height);
 		stillageEntity.setLength(length);
 		stillageEntity.setMax_weight(max_weight);
 		stillageEntity.setTypeProduct(products);
 		repository.save(stillageEntity);
-		return ResponseEntity.ok("Стилаж добавлен в дазу");
+		return ResponseEntity.ok("Стилаж добавлен в базу");
 	}
 
 	@ApiOperation("Удалить стилаж")
 	@DeleteMapping("/delete")
 	public ResponseEntity<?> deleteStillage(@RequestParam(name = "id") Long id){
 		repository.delete(repository.getOne(id));
-		return ResponseEntity.ok("Стилаж удален из дазы");
+		return ResponseEntity.ok("Стилаж удален из базы");
 	}
 
 	@ApiOperation("Показать список стилажей")
