@@ -18,61 +18,69 @@ import java.util.List;
 //					Высота									Длина							Глубина
 //1000; 1500; 1800; 2000; 2200; 2500; 3000; 3500	||	700; 1000; 1200; 1500 	||	300; 400; 500; 600; 800; 1000
 
-@Api(tags = {"Стилажи"}, description = "API для Стилажей на складе")
+@Api(tags = {"Стеллажи"}, description = "API для Стилажей на складе")
 @RestController
 @RequestMapping(value = "stillage")
 public class StillageController {
 
-	private final StillageRepository repository;
+    private final StillageRepository repository;
 
-	@Value("${standard.pallet.width}")
-	double pallet_width;
-	@Value("${standard.pallet.length}")
-	double pallet_length;
+    @Value("${standard.pallet.width}")
+    double pallet_width;
+    @Value("${standard.pallet.length}")
+    double pallet_length;
 
-	@Autowired
-	public StillageController(StillageRepository repository){
-		this.repository = repository;
-	}
+    @Autowired
+    public StillageController(StillageRepository repository) {
+        this.repository = repository;
+    }
 
-	@ApiOperation("Добавить стилаж")
-	@PostMapping("/add")
-	public ResponseEntity<?> addStillage(@RequestBody StillageEntity stillageEntity){
-		repository.save(stillageEntity);
-		return ResponseEntity.ok("Стилаж добавлен в дазу");
-	}
+    @ApiOperation("Добавить стеллаж")
+    @PostMapping("/add")
+    public ResponseEntity<?> addStillage(@RequestBody StillageEntity stillageEntity) {
+        repository.save(stillageEntity);
+        return ResponseEntity.ok("Стеллаж добавлен в дазу");
+    }
 
-	@ApiOperation("Добавить стилаж")
-	@PostMapping("/addStillageByRequests")
-	public ResponseEntity<?> addStillage(@RequestParam int stillage_index,
-										 @RequestParam int shelf_index,
-										 @RequestParam double width,
-										 @RequestParam double height,
-										 @RequestParam double length,
-										 @RequestParam double max_weight,
-										 @RequestParam Collection<BaseType.TypeProduct> products){
-		StillageEntity stillageEntity = new StillageEntity();
-		stillageEntity.setWidth(width);
-		stillageEntity.setStillage_index(stillage_index);
-		stillageEntity.setShelf_index(shelf_index);
-		stillageEntity.setHeight(height);
-		stillageEntity.setLength(length);
-		stillageEntity.setMax_weight(max_weight);
-		stillageEntity.setTypeProduct(products);
-		repository.save(stillageEntity);
-		return ResponseEntity.ok("Стилаж добавлен в базу");
-	}
+    @ApiOperation("Добавить стеллаж")
+    @PostMapping("/addStillageByRequests")
+    public ResponseEntity<?> addStillage(@RequestParam int stillage_index,
+                                         @RequestParam int shelf_index,
+                                         @RequestParam double width,
+                                         @RequestParam double height,
+                                         @RequestParam double length,
+                                         @RequestParam double max_weight,
+                                         @RequestParam int max_count_object,
+                                         @RequestParam Collection<BaseType.TypeProduct> products) {
+        StillageEntity stillageEntity = new StillageEntity();
+        stillageEntity.setWidth(width);
+        stillageEntity.setStillage_index(stillage_index);
+        stillageEntity.setShelf_index(shelf_index);
+        stillageEntity.setHeight(height);
+        stillageEntity.setLength(length);
+        stillageEntity.setMax_weight(max_weight);
+        stillageEntity.setTypeProduct(products);
+        stillageEntity.setMax_count_object(max_count_object);
+        repository.save(stillageEntity);
+        return ResponseEntity.ok("Стеллаж добавлен в базу");
+    }
 
-	@ApiOperation("Удалить стилаж")
-	@DeleteMapping("/delete")
-	public ResponseEntity<?> deleteStillage(@RequestParam(name = "id") Long id){
-		repository.delete(repository.getOne(id));
-		return ResponseEntity.ok("Стилаж удален из базы");
-	}
+    @ApiOperation("Удалить стеллаж")
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteStillage(@RequestParam(name = "id") Long id) {
+        repository.delete(repository.getOne(id));
+        return ResponseEntity.ok("Стеллаж удален из базы");
+    }
 
-	@ApiOperation("Показать список стилажей")
-	@PostMapping("/all")
-	public List<StillageEntity> getAll(){
-		return repository.findAll();
-	}
+    @ApiOperation("Показать список стеллаж")
+    @PostMapping("/all")
+    public List<StillageEntity> getAll() {
+        return repository.findAll();
+    }
+
+    @ApiOperation("Список пустых и не доконца заполненных стеллажей")
+    @PostMapping("/getLooseStillage")
+    public List<StillageEntity> getLooseStillage() {
+        return repository.getLooseStillage();
+    }
 }

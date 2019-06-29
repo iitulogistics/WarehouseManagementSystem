@@ -37,7 +37,7 @@ public class DocumentController {
 
     @ApiOperation("Сгенерировать документацию к отгружаемому товару")
     @PostMapping("docShippingProduct")
-    public HttpEntity<byte[]> docShippingProduct(@RequestParam Long id_batch) throws IOException {
+    public HttpEntity<byte[]> docShippingProduct(@RequestParam String company_name) throws IOException {
         List<ProductEntity> list = new ArrayList<>();
 
 

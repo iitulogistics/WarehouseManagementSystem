@@ -64,6 +64,7 @@ public class BatchController {
         TaskEntity taskEntity = new TaskEntity();
         taskEntity.setPriority(BaseType.PriorityOfExecution.midle);
         taskEntity.setCreated(new Date());
+        taskEntity.setTask("");
 
         int count_shipping = productEntity.getCount_on_shipping();
         int count_warehouse = productEntity.getCount_on_warehouse();
@@ -85,7 +86,7 @@ public class BatchController {
                 StillageEntity stillageEntity = stillageRepository.getOne(entity.getStillageId());
 
                 taskEntity.setTask(taskEntity.getTask() + "Взять контейнер с id = " + entity.getId() + " " +
-                        "со стиложа " + stillageEntity.getStillage_index() + ", и ячейки " +
+                        "со стеллажа " + stillageEntity.getStillage_index() + ", и ячейки " +
                         stillageEntity.getShelf_index() + "\n");
                 batchRepository.save(batchEntity);
             }
@@ -114,7 +115,7 @@ public class BatchController {
             StillageEntity stillageEntity = stillageRepository.getOne(list.get(0).getStillageId());
 
             taskEntity.setTask(taskEntity.getTask() + "Взять " + count + " шт. из контейнера с id = " + list.get(0).getId() + " " +
-                    "со стиложа " + stillageEntity.getStillage_index() + ", и ячейки " +
+                    "стеллаж " + stillageEntity.getStillage_index() + ", и ячейка " +
                     stillageEntity.getShelf_index() + "\n");
             batchRepository.save(batchEntity);
         }
@@ -123,7 +124,7 @@ public class BatchController {
 
         taskEntity.setTask(taskEntity.getTask() + " Упаковать все в batch для компании" + company_name);
         taskRepository.save(taskEntity);
-        return ResponseEntity.ok("Партия сформирована и готова к отправке для компании" + company_name);
+        return ResponseEntity.ok("Партия сформирована и готова к отправке для компании " + company_name);
     }
 
     @PostMapping("/all")

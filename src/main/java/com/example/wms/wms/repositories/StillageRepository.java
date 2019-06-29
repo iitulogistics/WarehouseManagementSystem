@@ -15,6 +15,11 @@ public interface StillageRepository extends JpaRepository<StillageEntity, Long> 
     @Query("update StillageEntity s set s.max_count_object = ?2 where s.id = ?1")
     void updateMaxCountObject(Long id,  int count);
 
+    @Modifying(clearAutomatically = true)
+    @Transactional
+    @Query("update StillageEntity s set s.count_object = ?2 where s.id = ?1")
+    void updateCountObject(Long id,  int count);
+
     @Query("select s from StillageEntity s where not s.max_count_object = s.count_object")
     List<StillageEntity> getLooseStillage();
 }

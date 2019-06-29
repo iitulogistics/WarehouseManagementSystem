@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping(value = "/container")
 public class ContainerController {
 
-    final ContainerRepository palletRepository;
+    private final ContainerRepository palletRepository;
 
     public ContainerController(ContainerRepository palletRepository) {
         this.palletRepository = palletRepository;

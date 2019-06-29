@@ -89,9 +89,9 @@ public class StoreProductsController {
                             for (ContainerEntity containerEntity : containerEntities2) {
 
                                 taskEntity.setTask(taskEntity.getTask() + "Контейнер с id = " +
-                                        containerEntity.getId() + "Переместить из стилажа с номером " + stillageEntities.get(j).getStillage_index() +
+                                        containerEntity.getId() + "Переместить из стеллажа с номером " + stillageEntities.get(j).getStillage_index() +
                                         " и ячейки " + stillageEntities.get(j).getShelf_index() +
-                                        " в стилаж " + stillageEntities.get(i).getStillage_index() +
+                                        " в стеллаж " + stillageEntities.get(i).getStillage_index() +
                                         " и ячейку " + stillageEntities.get(i).getShelf_index() + "\n");
 
                                 containerRepository.updateLifeCyrcleAndStillageById(containerEntity.getId(),
@@ -104,10 +104,10 @@ public class StoreProductsController {
                                         BaseType.LifeCycle.distribution, stillageEntities.get(j).getId());
 
                                 taskEntity.setTask(taskEntity.getTask() + "Контейнер с id = " +
-                                        containerEntity.getId() + "Переместить из стилажа с номером " +
+                                        containerEntity.getId() + "Переместить из стеллажа с номером " +
                                         stillageEntities.get(i).getStillage_index() +
                                         " и ячейки " + stillageEntities.get(i).getShelf_index() +
-                                        " в стилаж " + stillageEntities.get(j).getStillage_index() +
+                                        " в стеллаж " + stillageEntities.get(j).getStillage_index() +
                                         " и ячейку " + stillageEntities.get(j).getShelf_index() + "\n");
 
                                 info.append("Контейнер с id = ").append(containerEntity.getId()).append(" был перемещен\n");

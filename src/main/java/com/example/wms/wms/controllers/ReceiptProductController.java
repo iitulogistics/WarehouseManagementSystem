@@ -65,10 +65,13 @@ public class ReceiptProductController {
         return ResponseEntity.ok("Продукт добавлен в базу без контейнера.");
     }
 
-//    @ApiOperation("Бракованый товар")
-//    @PostMapping("/addDefectiveProduct")
-//    public ResponseEntity<?> addDefectiveProduct() {
-//        return ResponseEntity.ok("Продукт добавлен в базу без контейнера.");
+//    @ApiOperation("Дефектную коробку товара")
+//    @PostMapping("/addDefectiveProductBox")
+//    public ResponseEntity<?> addDefectiveProductBox(int count) {
+//        ContainerEntity productEntity = new ContainerEntity();
+//        productEntity.setLifeCycle(BaseType.LifeCycle.defective);
+//        containerRepository.save(productEntity);
+//        return ResponseEntity.ok("Продукт добавлен как дефектный.");
 //    }
 
     @ApiOperation("Добавить коробку")
@@ -126,7 +129,6 @@ public class ReceiptProductController {
         pallet.setWeight(productEntity.getWeight() * count_product);
         pallet.setLifeCycle(BaseType.LifeCycle.receipt);
 
-        //Стандартный размер палеты 1000мм на 1200мм
         pallet.setLength(standard_length);
         pallet.setWidth(standard_width);
         //Распределение палета
@@ -182,15 +184,12 @@ public class ReceiptProductController {
     @ApiOperation("Выбор стилажа для контейнера")
     @PostMapping("/distribution")
     public ResponseEntity<?> distribution(Long id_container, Long id_stillage) {
+        stillageRepository.updateCountObject(id_stillage, stillageRepository.getOne(id_stillage).getCount_object() + 1);
         containerRepository.updateLifeCyrcleAndStillageById(id_container, BaseType.LifeCycle.distribution, id_stillage);
         return ResponseEntity.ok("Палету присвоен стилаж");
     }
 
-    @ApiOperation("Список стилажей для хранения в нет контейнера")
-    @PostMapping("/getLooseStillage")
-    public List<StillageEntity> getLooseStillage() {
-        return stillageRepository.getLooseStillage();
-    }
+
 
     @ApiOperation("генерировать qr code")
     @PostMapping("/generationQRCode")
