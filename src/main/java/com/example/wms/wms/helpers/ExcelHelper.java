@@ -1,5 +1,6 @@
-package com.example.wms.wms.doc;
+package com.example.wms.wms.helpers;
 
+import com.example.wms.wms.entities.BatchEntity;
 import com.example.wms.wms.entities.ProductEntity;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -8,20 +9,13 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.tomcat.util.http.fileupload.FileItem;
-import org.apache.tomcat.util.http.fileupload.disk.DiskFileItem;
-import org.springframework.core.io.InputStreamSource;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class Excel {
+public class ExcelHelper {
 
     public static List<ProductEntity> readFromExcelFile(MultipartFile multipartFile) throws IOException {
 
@@ -59,20 +53,12 @@ public class Excel {
     }
 
 
-    public static File createExelFile(List<ProductEntity> containerEntities) {
+    public static File createExelFile(Map<Integer, Object[]> data) {
         XSSFWorkbook workbook = new XSSFWorkbook();
 
         // Create a blank sheet
-        XSSFSheet sheet = workbook.createSheet("student Details");
+        XSSFSheet sheet = workbook.createSheet("Batch");
 
-        // This data needs to be written (Object[])
-        Map<Integer, Object[]> data = new TreeMap<Integer, Object[]>();
-        data.put(0, new Object[]{"ID", "Name", "Count", "Price"});
-
-        for (int i = 0; i < containerEntities.size(); i++) {
-            ProductEntity container = containerEntities.get(i);
-            data.put(i + 1, new Object[]{container.getId().toString(), container.getProduct_name(), container.getCount_on_shipping(),""+ container.getPrice()});
-        }
 
         // Iterate over data and write to sheet
         Set<Integer> keyset = data.keySet();

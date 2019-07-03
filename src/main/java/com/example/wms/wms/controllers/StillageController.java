@@ -20,7 +20,7 @@ import java.util.List;
 
 @Api(tags = {"Стеллажи"}, description = "API для Стилажей на складе")
 @RestController
-@RequestMapping(value = "stillage")
+@RequestMapping(value = "/stillage")
 public class StillageController {
 
     private final StillageRepository repository;

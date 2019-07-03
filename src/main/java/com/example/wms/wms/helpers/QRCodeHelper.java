@@ -1,4 +1,4 @@
-package com.example.wms.wms.qr_code;
+package com.example.wms.wms.helpers;
 
 import com.google.zxing.*;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class QRCodeReader {
+public class QRCodeHelper {
 
     public static String decodeQRCode(MultipartFile qrCodeimage) throws IOException {
         BufferedImage bufferedImage = ImageIO.read(qrCodeimage.getInputStream());
