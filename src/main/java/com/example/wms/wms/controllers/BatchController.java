@@ -6,15 +6,11 @@ import com.example.wms.wms.repositories.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.lang.reflect.Array;
+import java.util.*;
 
 @Api(tags = {"Заказ"}, description = "API для заказа товара со склада")
 @RestController
@@ -36,6 +32,44 @@ public class BatchController {
         this.batchRepository = batchRepository;
         this.taskRepository = taskRepository;
         this.stillageRepository = stillageRepository;
+    }
+
+    @GetMapping("")
+    public ModelAndView main() {
+        Map<String, Object> root = new TreeMap<>();
+
+        root.put("products", productRepository.findAll());
+        List<BatchEntity> batchEntity = batchRepository.findAll();
+
+        List<Object[]> list = new ArrayList<>();
+
+        for (int i = 0; i < batchEntity.size(); i++) {
+            boolean isHave = false;
+
+            for (int j = i - 1; j >= 0; j--) {
+                if (batchEntity.get(i).getCompany_name().equals(batchEntity.get(j).getCompany_name())) {
+                    isHave = true;
+                    break;
+                }
+            }
+            if (!isHave) {
+                String comp_name = "";
+                StringBuilder productsInfo = new StringBuilder();
+                double cost = 0;
+
+                for (BatchEntity batch : batchRepository.getBatchByCompanyName(batchEntity.get(i).getCompany_name())) {
+                    comp_name = batch.getCompany_name();
+                    ProductEntity productEntity = productRepository.getOne(containerRepository.getOne(batch.getContainer_id()).getProduct_id());
+
+                    productsInfo.append(productEntity.getProduct_name()).append(" : ").append(batch.getCount()).append(" шт.<br>");
+
+                    cost += batch.getCount() * productEntity.getPrice();
+                }
+                list.add(new Object[]{comp_name, productsInfo.toString(), cost});
+            }
+        }
+        root.put("batches", list);
+        return new ModelAndView("batch", root);
     }
 
     @ApiOperation("Создать batch")

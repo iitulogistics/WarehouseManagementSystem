@@ -33,6 +33,18 @@ public class ProductController {
 		return repository.findAll();
 	}
 
+	@ApiOperation("Показать продукт по имени")
+	@PostMapping("/getProductByName")
+	public List<ProductEntity> getProductByName(@RequestParam String name){
+		return repository.getProductByName(name);
+	}
+
+	@ApiOperation("Показать продукт по имени")
+	@PostMapping("/getProductLikeName")
+	public List<ProductEntity> getProductLikeName(@RequestParam String name){
+		return repository.getProductLikeName(name);
+	}
+
 	@ApiOperation("Удалить продукт")
 	@DeleteMapping("/deleteById")
 	public void deleteProduct(@RequestParam(name = "id") Long id){
