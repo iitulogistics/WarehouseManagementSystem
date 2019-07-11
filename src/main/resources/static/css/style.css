@@ -1,0 +1,39 @@
+img {
+    width: 150px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.mainList {
+    display: inline-flex;
+}
+
+.mainListContent {
+    min-height: 50px;
+    padding: 10px;
+}
+
+.mainListContent:hover {
+    color: #ffffff;
+    background-color: #2CEB12;
+}
+
+.navbar {
+    background-color: #dfe2df;
+    margin-bottom: 10px;
+}
+
+.navbar a {
+    color: #337ab7;
+    text-decoration: none;
+}
+
+.search_form{
+    margin: 15px 0px;
+}
+
+.stillage_statistics p{
+    margin-bottom: 5px;
+}
