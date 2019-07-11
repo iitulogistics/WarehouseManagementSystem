@@ -22,4 +22,8 @@ public interface StillageRepository extends JpaRepository<StillageEntity, Long> 
 
     @Query("select s from StillageEntity s where not s.max_count_object = s.count_object")
     List<StillageEntity> getLooseStillage();
+
+
+    @Query("select s from StillageEntity s where  s.stillage_index = ?1")
+    List<StillageEntity> getStillagesByIndex(int index);
 }
