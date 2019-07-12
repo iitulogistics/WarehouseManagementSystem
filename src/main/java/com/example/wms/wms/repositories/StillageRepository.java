@@ -26,4 +26,7 @@ public interface StillageRepository extends JpaRepository<StillageEntity, Long> 
 
     @Query("select s from StillageEntity s where  s.stillage_index = ?1")
     List<StillageEntity> getStillagesByIndex(int index);
+
+    @Query("select s from StillageEntity s where  s.stillage_index = ?1 and s.shelf_index = ?2")
+    StillageEntity getStillagesByIndexes(int stillage_index, int shelf_index);
 }

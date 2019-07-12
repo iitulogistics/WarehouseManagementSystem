@@ -5,15 +5,16 @@ import com.example.wms.wms.entities.ContainerEntity;
 import com.example.wms.wms.entities.StillageEntity;
 import com.example.wms.wms.entities.TaskEntity;
 import com.example.wms.wms.repositories.ContainerRepository;
+import com.example.wms.wms.repositories.ProductRepository;
 import com.example.wms.wms.repositories.StillageRepository;
 import com.example.wms.wms.repositories.TaskRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Api(tags = {"Хранение"}, description = "API контроля товара на складе")
 @RequestMapping("/store")
@@ -22,17 +23,51 @@ public class StoreProductsController {
     private final ContainerRepository containerRepository;
     private final StillageRepository stillageRepository;
     private final TaskRepository taskRepository;
+    private final ProductRepository productRepository;
 
     public StoreProductsController(ContainerRepository containerRepository,
                                    StillageRepository stillageRepository,
-                                   TaskRepository taskRepository) {
+                                   TaskRepository taskRepository,
+                                   ProductRepository productRepository) {
         this.containerRepository = containerRepository;
         this.stillageRepository = stillageRepository;
         this.taskRepository = taskRepository;
+        this.productRepository = productRepository;
+    }
+
+    @GetMapping("")
+    public ModelAndView main() {
+        Map<String, Object> root = new TreeMap<>();
+        List<ContainerEntity> containerEntities = getListContOnDist();
+        root.put("count_containers", containerEntities.size());
+
+        List<Object[]> containersInfo = new ArrayList<>();
+
+        for (ContainerEntity container : containerEntities) {
+            containersInfo.add(new Object[]{container.getId(),
+                    productRepository.getOne(container.getProduct_id()).getProduct_name() + " " + container.getCount_product()
+                            + " шт., размеры " + container.getWidth() + "/" + container.getHeight() +
+                            "/" + container.getLength() + " " + container.getWeight() + " кг."});
+        }
+
+        root.put("containers", containersInfo);
+
+        List<Object[]> stillagesInfo = new ArrayList<>();
+
+        for (StillageEntity stillageEntity : stillageRepository.getLooseStillage()) {
+            stillagesInfo.add(new Object[]{stillageEntity.getId(), "Номер стеллажа " + stillageEntity.getStillage_index() +
+                    " , номер ячейки " + stillageEntity.getShelf_index() +
+                    " ,размеры ячейки " + stillageEntity.getWidth() + "/" + stillageEntity.getHeight() + "/" + stillageEntity.getLength() +
+                    " ,максимальный вес " + stillageEntity.getMax_weight()});
+        }
+
+        root.put("stillages", stillagesInfo);
+
+        return new ModelAndView("store", root);
     }
 
     @ApiOperation("Вывод списка товаров находяшихся на этапе распределения")
-    @GetMapping("/getListContOnDist")
+    @PostMapping("/getListContOnDist")
     public List<ContainerEntity> getListContOnDist() {
         return containerRepository.getContainerByLifeCycle(BaseType.LifeCycle.distribution);
     }
@@ -55,6 +90,14 @@ public class StoreProductsController {
         } else {
             return ResponseEntity.ok("Эта полка не для этого товара");
         }
+    }
+
+    @ApiOperation("Поставить на полку")
+    @PostMapping("/putOnShelfByIndexes")
+    public ResponseEntity<?> putOnShelfByIndexes(@RequestParam Long id_container,
+                                                 @RequestParam int stillage_index,
+                                                 @RequestParam int shelf_index) {
+        return putOnShelf(id_container, stillageRepository.getStillagesByIndexes(stillage_index, shelf_index).getId());
     }
 
     @ApiOperation("Оптимизация товара на складе")

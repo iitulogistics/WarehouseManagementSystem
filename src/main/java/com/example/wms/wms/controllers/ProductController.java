@@ -6,15 +6,36 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Api(tags = {"Товары"}, description = "API для товара на складе")
 @RestController
-@RequestMapping(value = "/product")
+//@RequestMapping(value = "/product")
 public class ProductController {
 
 	private final ProductRepository repository;
+
+	@GetMapping("/")
+	public ModelAndView index() {
+		Map<String, Object> root = new TreeMap<>();
+
+		root.put("products", showAll());
+		root.put("last_search", "");
+		return new ModelAndView("index", root) ;
+	}
+
+	@PostMapping("/")
+	public ModelAndView getProdLikeName(@RequestParam(name = "name") String name) {
+		Map<String, Object> root = new TreeMap<>();
+
+		root.put("products", getProductLikeName(name));
+		root.put("last_search", name);
+		return new ModelAndView("index", root);
+	}
 
 	@Autowired
 	public ProductController(ProductRepository repository) {
