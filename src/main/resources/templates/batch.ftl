@@ -50,10 +50,10 @@
 <div class="col-lg-12">
     <h2>Список заказов</h2>
     <div class="search_form">
-        <form method="post">
+        <form method="get">
             <div class="form-group">
                 <label for="exampleInputEmail1"></label>
-                <input type="product_name" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                <input type="product_name" class="form-control" name="company_name" id="exampleInputEmail1" aria-describedby="emailHelp"
                        placeholder="Enter company name">
                 <small id="emailHelp" class="form-text text-muted">Напишите наименования компании для которой
                     сформирован заказ

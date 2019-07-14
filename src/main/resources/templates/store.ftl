@@ -27,7 +27,6 @@
 <body>
 <@ui.nav/>
 <div class="main_content">
-    <h2>Кол-во контейнеров которые: ${count_containers} шт.</h2>
     <div class="col-lg-12">
             <div class="order col-lg-7">
                 <form method="post" action="/store/putOnShelfByIndexes">

@@ -35,7 +35,12 @@ public class BatchController {
     }
 
     @GetMapping("")
-    public ModelAndView main() {
+//    public ModelAndView () {
+//        return search("");
+//    }
+
+
+    public ModelAndView main(@RequestParam(name = "company_name", defaultValue = "") String s) {
         Map<String, Object> root = new TreeMap<>();
 
         root.put("products", productRepository.findAll());
@@ -44,6 +49,9 @@ public class BatchController {
         List<Object[]> list = new ArrayList<>();
 
         for (int i = 0; i < batchEntity.size(); i++) {
+            if ((!batchEntity.get(i).getCompany_name().equals(s) ||
+                    !batchEntity.get(i).getCompany_name().contains(s)) &&
+                    !s.isEmpty()) break;
             boolean isHave = false;
 
             for (int j = i - 1; j >= 0; j--) {

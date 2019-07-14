@@ -1,6 +1,6 @@
 <#macro nav>
 <nav class="navbar">
-    <div class="col-lg-4 logo">
+    <div class="col-lg-3 logo">
         <img src="img/logo.png" alt="logo">
     </div>
 
