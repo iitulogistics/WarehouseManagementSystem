@@ -4,6 +4,7 @@ import com.example.wms.wms.entities.TaskEntity;
 import com.example.wms.wms.repositories.TaskRepository;
 import io.swagger.annotations.Api;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,9 +22,9 @@ public class TaskController {
         this.taskRepository = taskRepository;
     }
 
-    @PostMapping("/all")
-    public List<TaskEntity> getAll() {
-        return taskRepository.findAll();
+    @GetMapping("/all")
+    public ResponseEntity<?> getAll() {
+        return ResponseEntity.ok(taskRepository.findAll());
     }
 
     @PostMapping("/allCurrentTasks")
