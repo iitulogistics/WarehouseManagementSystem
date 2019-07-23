@@ -2,7 +2,6 @@ package com.example.wms.wms.controllers;
 
 import com.example.wms.wms.base.BaseType;
 import com.example.wms.wms.entities.ContainerEntity;
-import com.example.wms.wms.entities.ProductEntity;
 import com.example.wms.wms.entities.StillageEntity;
 import com.example.wms.wms.repositories.ContainerRepository;
 import com.example.wms.wms.repositories.ProductRepository;
@@ -11,17 +10,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.lang.reflect.Array;
 import java.util.*;
-
-//										Стандартные размеры стилажей
-//					Высота									Длина							Глубина
-//1000; 1500; 1800; 2000; 2200; 2500; 3000; 3500	||	700; 1000; 1200; 1500 	||	300; 400; 500; 600; 800; 1000
 
 @Api(tags = {"Стеллажи"}, description = "API для Стилажей на складе")
 @RestController
@@ -52,8 +45,8 @@ public class StillageController {
         stillageEntities.sort(new Comparator<StillageEntity>() {
             @Override
             public int compare(StillageEntity o1, StillageEntity o2) {
-                return (o1.getStillage_index() == o2.getStillage_index() ?
-                        (o1.getShelf_index() - o2.getShelf_index()) : (o1.getStillage_index() - o2.getStillage_index()));
+                return (o1.getStillage_index() * 100 + o1.getShelf_index())
+                        - (o2.getStillage_index() * 100 + o2.getShelf_index());
             }
         });
 
@@ -71,7 +64,7 @@ public class StillageController {
                 last_index = stillage_index;
             } else {
                 StringBuilder info = new StringBuilder();
-                for(ContainerEntity container : containerRepository.getContainersByStillageId(stillageEntities.get(i).getId())){
+                for (ContainerEntity container : containerRepository.getContainersByStillageId(stillageEntities.get(i).getId())) {
                     info.append("Контейнер №").append(container.getId()).append(": ")
                             .append(productRepository.getOne(container.getProduct_id()).getProduct_name())
                             .append(" ").append(container.getCount_product()).append("шт.<br>");

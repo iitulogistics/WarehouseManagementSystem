@@ -26,11 +26,6 @@ public class ContainerEntity {
     @Column(name = "weight")
     double weight;
 
-
-    //@ElementCollection(targetClass = BaseType.TypeContainerProduct.class, fetch = FetchType.EAGER)
-    //@CollectionTable(name = "tblTypeContainerProduct", joinColumns = @JoinColumn(name = "id"))
-    //@Column(name = "type_container")
-    //@ElementCollection(targetClass = BaseType.TypeContainerProduct.class)
     @Enumerated(EnumType.STRING)
     BaseType.TypeContainerProduct typeContainer;
 

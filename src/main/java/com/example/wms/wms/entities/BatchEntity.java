@@ -22,5 +22,4 @@ public class BatchEntity {
 //    String delivery_address;
 //    @Column(name = "delivery_date")
 //    Date delivery_date;
-
 }
