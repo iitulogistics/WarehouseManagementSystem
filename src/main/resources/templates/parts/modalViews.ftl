@@ -4,35 +4,40 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Добавление продукта</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <h3>Добавление продукта</h3>
                     <form action="/addProductByParam" method="post" id="addProduct">
                         <div class="form-group">
                             <label for="search_prod_by_name1">Наименование товара</label>
-                            <input type="text" class="form-control" id="search_prod_by_name" name="product_name"
+                            <input required type="text" class="form-control" id="search_prod_by_name"
+                                   name="product_name"
                                    placeholder="Enter product name">
                             <small id="emailHelp" class="form-text text-muted">Напишите наименования продукта</small>
 
                             <div class="form-group row">
                                 <div class="col-lg-4">
-                                    <input type="number" class="form-control" id="search_prod_by_name" name="length"
+                                    <input required type="number" step="0.001" class="form-control"
+                                           id="search_prod_by_name"
+                                           name="length"
                                     >
                                     <small id="emailHelp" class="form-text text-muted">Напишите длину продукта в метрах
                                     </small>
                                 </div>
                                 <div class="col-lg-4">
-                                    <input type="number" class="form-control" id="search_prod_by_name" name="height"
+                                    <input required type="number" step="0.001" class="form-control"
+                                           id="search_prod_by_name"
+                                           name="height"
                                     >
                                     <small id="emailHelp" class="form-text text-muted">Напишите высоту продукта в метрах
                                     </small>
                                 </div>
                                 <div class="col-lg-4">
-                                    <input type="number" class="form-control" id="search_prod_by_name" name="width"
+                                    <input required type="number" step="0.001" class="form-control"
+                                           id="search_prod_by_name" name="width"
                                     >
                                     <small id="emailHelp" class="form-text text-muted">Напишите ширину продукта в метрах
                                     </small>
@@ -50,15 +55,21 @@
                                 </div>
 
                                 <div class="col-lg-4">
-                                    <input type="number" class="form-control" id="search_prod_by_name" name="weight"
-                                    >
-                                    <small id="emailHelp" class="form-text text-muted">Напишите вес продукта в кг.</small>
+                                    <input required type="number" step="0.001" class="form-control"
+                                           id="search_prod_by_name"
+                                           name="weight">
+
+                                    <small id="emailHelp" class="form-text text-muted">Напишите вес продукта в кг.
+                                    </small>
                                 </div>
 
                                 <div class="col-lg-4">
-                                    <input type="number" class="form-control" id="search_prod_by_name" name="price"
-                                    >
-                                    <small id="emailHelp" class="form-text text-muted">Напишите цену продукта в тг.</small>
+                                    <input required type="number" step="0.001" class="form-control"
+                                           id="search_prod_by_name"
+                                           name="price">
+
+                                    <small id="emailHelp" class="form-text text-muted">Напишите цену продукта в тг.
+                                    </small>
                                 </div>
                             </div>
                         </div>
