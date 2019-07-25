@@ -6,6 +6,7 @@ import com.example.wms.wms.repositories.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -35,12 +36,8 @@ public class BatchController {
     }
 
     @GetMapping("")
-//    public ModelAndView () {
-//        return search("");
-//    }
-
-
-    public ModelAndView main(@RequestParam(name = "company_name", defaultValue = "") String s) {
+    public ModelAndView main(@AuthenticationPrincipal User user,
+                             @RequestParam(name = "company_name", defaultValue = "") String s) {
         Map<String, Object> root = new TreeMap<>();
 
         root.put("products", productRepository.findAll());
@@ -77,6 +74,7 @@ public class BatchController {
             }
         }
         root.put("batches", list);
+        root.put("user", user);
         return new ModelAndView("batch", root);
     }
 

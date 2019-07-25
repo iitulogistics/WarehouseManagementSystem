@@ -1,6 +1,6 @@
 <#import "parts/nav.ftl" as ui/>
 <#import "parts/common.ftl" as c/>
-<@c.page>
+<@c.page title="Статистика">
 <@ui.nav/>
 
 <div class="main_content">

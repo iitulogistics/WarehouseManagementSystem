@@ -1,6 +1,6 @@
 <#import "parts/nav.ftl" as ui/>
 <#import "parts/common.ftl" as c/>
-<@c.page>
+<@c.page title="Заказы">
     <@ui.nav/>
     <div class="order col-lg-7">
         <form method="post" action="/batch/addBatch">
@@ -19,6 +19,7 @@
                 </select>
 
             </div>
+            <input type="hidden" name="_csrf" value="${_csrf.token}"/>
             <button type="submit" class="btn btn-primary">Сделать заказ</button>
         </form>
     </div>
@@ -35,6 +36,7 @@
                         сформирован заказ
                     </small>
                 </div>
+                <input type="hidden" name="_csrf" value="${_csrf.token}"/>
                 <button type="submit" class="btn btn-primary">Поиск</button>
             </form>
         </div>

@@ -2,11 +2,13 @@ package com.example.wms.wms.controllers;
 
 import com.example.wms.wms.entities.ProductEntity;
 import com.example.wms.wms.entities.StillageEntity;
+import com.example.wms.wms.entities.User;
 import com.example.wms.wms.repositories.ProductRepository;
 import com.example.wms.wms.repositories.StillageRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +33,7 @@ public class StatisticsController {
     }
 
     @GetMapping("")
-    public ModelAndView main() {
+    public ModelAndView main(@AuthenticationPrincipal User user) {
         Map<String, Object> root = new TreeMap<>();
 
         List<StillageEntity> stillageEntities = stillageRepository.findAll();
@@ -50,6 +52,7 @@ public class StatisticsController {
         root.put("looseStillage", looseStillage);
         root.put("withContainer", withContainer);
         root.put("busy", (stillageEntities.size() - looseStillage - withContainer));
+        root.put("user", user);
 
         return new ModelAndView("statistics", root);
     }

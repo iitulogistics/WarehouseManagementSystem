@@ -1,4 +1,4 @@
-<#macro page>
+<#macro page title>
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -19,7 +19,7 @@
 
         <link rel="stylesheet" href="css/style.css">
 
-        <title>Заказы</title>
+        <title>${title}</title>
     </head>
     <body>
     <#nested>

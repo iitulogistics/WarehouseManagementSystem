@@ -1,6 +1,6 @@
 <#import "parts/nav.ftl" as ui/>
 <#import "parts/common.ftl" as c/>
-<@c.page>
+<@c.page title="Стеллажи">
     <@ui.nav/>
     <#list stillages as stillage>
         <div class="col-lg-12">

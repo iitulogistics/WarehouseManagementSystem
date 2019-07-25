@@ -3,6 +3,7 @@ package com.example.wms.wms.controllers;
 import com.example.wms.wms.base.BaseType;
 import com.example.wms.wms.entities.ContainerEntity;
 import com.example.wms.wms.entities.StillageEntity;
+import com.example.wms.wms.entities.User;
 import com.example.wms.wms.repositories.ContainerRepository;
 import com.example.wms.wms.repositories.ProductRepository;
 import com.example.wms.wms.repositories.StillageRepository;
@@ -11,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -40,7 +42,7 @@ public class StillageController {
     }
 
     @GetMapping("")
-    public ModelAndView main() {
+    public ModelAndView main(@AuthenticationPrincipal User user) {
         List<StillageEntity> stillageEntities = repository.findAll();
         stillageEntities.sort(new Comparator<StillageEntity>() {
             @Override
@@ -74,6 +76,8 @@ public class StillageController {
             }
         }
         root.put("stillages", final_list);
+        root.put("user", user);
+
         return new ModelAndView("stillage", root);
     }
 

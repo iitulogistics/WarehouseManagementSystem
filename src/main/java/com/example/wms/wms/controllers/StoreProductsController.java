@@ -4,6 +4,7 @@ import com.example.wms.wms.base.BaseType;
 import com.example.wms.wms.entities.ContainerEntity;
 import com.example.wms.wms.entities.StillageEntity;
 import com.example.wms.wms.entities.TaskEntity;
+import com.example.wms.wms.entities.User;
 import com.example.wms.wms.repositories.ContainerRepository;
 import com.example.wms.wms.repositories.ProductRepository;
 import com.example.wms.wms.repositories.StillageRepository;
@@ -11,6 +12,7 @@ import com.example.wms.wms.repositories.TaskRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -36,7 +38,7 @@ public class StoreProductsController {
     }
 
     @GetMapping("")
-    public ModelAndView main() {
+    public ModelAndView main(@AuthenticationPrincipal User user) {
         Map<String, Object> root = new TreeMap<>();
         List<ContainerEntity> containerEntities = getListContOnDist();
         root.put("count_containers", containerEntities.size());
@@ -62,6 +64,7 @@ public class StoreProductsController {
         }
 
         root.put("stillages", stillagesInfo);
+        root.put("user", user);
 
         return new ModelAndView("store", root);
     }

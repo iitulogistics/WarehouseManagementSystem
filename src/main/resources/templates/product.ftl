@@ -1,11 +1,12 @@
 <#import "parts/nav.ftl" as ui/>
 <#import "parts/modalViews.ftl" as modal/>
 <#import "parts/common.ftl" as c/>
-<@c.page>
+<#import "parts/login.ftl" as l>
+
+<@c.page title="Продукты">
     <@ui.nav/>
     <div class="main_content col-lg-12">
         <div class="">
-
             <h2>Список товаров</h2>
             <div class="search_form">
                 <form method="post">
@@ -20,6 +21,7 @@
                             поиска
                         </small>
                     </div>
+                    <input type="hidden" name="_csrf" value="${_csrf.token}"/>
                     <button type="submit" class="btn btn-primary">Поиск</button>
                 </form>
             </div>
