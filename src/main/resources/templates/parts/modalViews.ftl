@@ -10,7 +10,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="/addProductByParam" method="post" id="addProduct">
+                    <form action="/product/addProductByParam" method="post" id="addProduct">
                         <div class="form-group">
                             <label for="search_prod_by_name1">Наименование товара</label>
                             <input required type="text" class="form-control" id="search_prod_by_name"

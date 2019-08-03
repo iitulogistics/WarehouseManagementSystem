@@ -4,7 +4,6 @@ import com.example.wms.wms.entities.Role;
 import com.example.wms.wms.entities.User;
 import com.example.wms.wms.repositories.UserRepository;
 import io.swagger.annotations.Api;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -25,4 +25,8 @@ public class TaskEntity {
 
     @Column(name = "done")
     Date done;
+
+    @JoinColumn(name = "usr_id")
+    @ManyToOne
+    User user;
 }

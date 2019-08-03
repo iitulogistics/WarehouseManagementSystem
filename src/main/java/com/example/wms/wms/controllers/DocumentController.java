@@ -42,7 +42,7 @@ public class DocumentController {
     }
 
     @ApiOperation("Документация к поступающему товару")
-    @PostMapping("docExpectedProduct")
+    @PostMapping("/docExpectedProduct")
     public ResponseEntity<?> docExpectedProduct(@RequestParam MultipartFile file) throws IOException {
         StringBuilder info = new StringBuilder();
         for (ProductEntity product : ExcelHelper.readFromExcelFile(file)) {
@@ -52,7 +52,7 @@ public class DocumentController {
     }
 
     @ApiOperation("Сгенерировать документацию к отгружаемому товару")
-    @PostMapping("docShippingProduct")
+    @PostMapping("/docShippingProduct")
     public HttpEntity<byte[]> docShippingProduct(@RequestParam String company_name) throws IOException {
         Map<Integer, Object[]> list = new TreeMap<>();
 

@@ -1,16 +1,20 @@
 package com.example.wms.wms.controllers;
 
 import com.example.wms.wms.entities.TaskEntity;
+import com.example.wms.wms.entities.User;
 import com.example.wms.wms.repositories.TaskRepository;
 import io.swagger.annotations.Api;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.persistence.GeneratedValue;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Api(tags = {"Задачи"}, description = "API контроля задач")
 @RestController
@@ -18,8 +22,18 @@ import java.util.List;
 public class TaskController {
     private final TaskRepository taskRepository;
 
-    TaskController(TaskRepository taskRepository) {
+    public TaskController(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
+    }
+
+    @GetMapping("")
+    public ModelAndView main(@AuthenticationPrincipal User user) {
+        Map<String, Object> root = new TreeMap<>();
+        root.put("myDoneTask", taskRepository.getDoneTasksByUser(user));
+        root.put("currentTask", taskRepository.getCurrentTasks());
+        root.put("myCurrentTask", taskRepository.getCurrentTasksByUser(user));
+        root.put("user", user);
+        return new ModelAndView("tasks", root);
     }
 
     @GetMapping("/all")
@@ -27,20 +41,26 @@ public class TaskController {
         return ResponseEntity.ok(taskRepository.findAll());
     }
 
-    @PostMapping("/allCurrentTasks")
+    @GetMapping("/allCurrentTasks")
     public List<TaskEntity> getAllCurrentTasks() {
         return taskRepository.getCurrentTasks();
     }
 
-    @PostMapping("/allDoneTasks")
+    @GetMapping("/allDoneTasks")
     public List<TaskEntity> getAllDoneTasks() {
         return taskRepository.getDoneTasks();
     }
 
     @PostMapping("/done")
-    public ResponseEntity<?> taskDone(Long id) {
+    public ResponseEntity<?> taskDone(@RequestParam Long id) {
         taskRepository.taskDone(id, new Date());
         return ResponseEntity.ok("Задача с id = " + id + " выполнена");
     }
 
+    @PostMapping("/takeTask")
+    public ResponseEntity<?> takeTask(@AuthenticationPrincipal User user,
+                                      @RequestParam Long task_id) {
+        taskRepository.setTaskUserByTaskId(task_id, user);
+        return ResponseEntity.ok("Задание присвоено работнику с именем " + user.getUsername());
+    }
 }

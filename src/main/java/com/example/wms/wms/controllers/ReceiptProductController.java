@@ -40,7 +40,6 @@ public class ReceiptProductController {
     @Value("${standard.pallet.height}")
     double standard_height;
 
-
     @Autowired
     public ReceiptProductController(ProductRepository productRepository,
                                     ContainerRepository containerRepository,

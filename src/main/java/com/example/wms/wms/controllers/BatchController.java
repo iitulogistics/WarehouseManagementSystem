@@ -10,7 +10,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 @Api(tags = {"Заказ"}, description = "API для заказа товара со склада")

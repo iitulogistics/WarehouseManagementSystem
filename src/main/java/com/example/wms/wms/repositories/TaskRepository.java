@@ -1,6 +1,7 @@
 package com.example.wms.wms.repositories;
 
 import com.example.wms.wms.entities.TaskEntity;
+import com.example.wms.wms.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -21,4 +22,15 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
 
     @Query("select task from TaskEntity task where task.done is not null")
     List<TaskEntity> getDoneTasks();
+
+    @Query("select task from TaskEntity task where task.done is not null and task.user = ?1")
+    List<TaskEntity> getDoneTasksByUser(User user);
+
+    @Query("select task from TaskEntity task where task.done is null and task.user = ?1")
+    List<TaskEntity> getCurrentTasksByUser(User user);
+
+    @Modifying(clearAutomatically = true)
+    @Transactional
+    @Query("update TaskEntity task set task.user = ?2 where task.id = ?1")
+    void setTaskUserByTaskId(Long id, User user);
 }
