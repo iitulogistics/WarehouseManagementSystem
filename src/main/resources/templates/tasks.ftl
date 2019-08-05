@@ -5,9 +5,9 @@
     <@nav.nav/>
     <div class="container">
         <div class="row">
-                <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#list">Список моих
-                    заданий
-                </button>
+            <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#list">Список моих
+                заданий
+            </button>
             <div class="col-lg-12">
                 <div id="list" class="collapse">
                     <table class="table table-striped">
@@ -63,10 +63,14 @@
                         <tbody>
                         <#list currentTask as task>
                             <tr>
-                                <td>${task.getId()}</td>
-                                <td>${task.getTask()}</td>
-                                <td>${task.getCreated()}</td>
-                                <td>${task.getPriority()}</td>
+                            <td>${task.getId()}</td>
+                            <td>${task.getTask()}</td>
+                            <td>${task.getCreated()}</td>
+                            <td>${task.getPriority()}</td>
+
+                            <#if task.getUser()?has_content>
+                                <td><p>Задача взята пользователем ${task.getUser().getUsername()}</p></td>
+                            <#else>
                                 <td>
                                     <form action="/task/takeTask" method="post">
                                         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
@@ -74,6 +78,7 @@
                                         <button class="btn btn-primary" type="submit">Взять</button>
                                     </form>
                                 </td>
+                            </#if>
                             </tr>
                         </#list>
                         </tbody>
