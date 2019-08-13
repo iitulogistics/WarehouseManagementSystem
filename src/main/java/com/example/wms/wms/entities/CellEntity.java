@@ -8,20 +8,24 @@ import java.util.Collection;
 
 @Data
 @Entity
-public class StillageEntity {
+public class CellEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
     @Column(name = "stillage_index")
-    int stillage_index;
+    int stillage;
     @Column(name = "shelf_index")
-    int shelf_index;
+    int shelf;
+    @Column(name = "cell_index")
+    int cell;
+
     @Column(name = "stillige_width")
     double width;
     @Column(name = "stillage_height")
     double height;
     @Column(name = "stillage_length")
     double length;
+
     @Column(name = "stillage_max_weight")
     double max_weight;
     @Column(name = "stillage_max_count_object")
@@ -32,9 +36,4 @@ public class StillageEntity {
     @ElementCollection(targetClass = BaseType.TypeProduct.class)
     @Enumerated(EnumType.STRING)
     Collection<BaseType.TypeProduct> typeProduct;
-
-    @ElementCollection(targetClass = ContainerEntity.class)
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "product_stillage_id")
-    Collection<ContainerEntity> containerEntities;
 }

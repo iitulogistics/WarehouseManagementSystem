@@ -16,14 +16,15 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
                 integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
                 crossorigin="anonymous"></script>
-
         <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/bootstrap-select.css">
 
         <title>${title}</title>
     </head>
     <body>
     <#nested>
     <script src="js/bootstrap.min.js"></script>
+    <script src="/js/bootstrap-select.js"></script>
     </body>
     </html>
 </#macro>

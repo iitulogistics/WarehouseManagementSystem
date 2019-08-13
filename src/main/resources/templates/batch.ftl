@@ -3,16 +3,16 @@
 <@c.page title="Заказы">
     <@ui.nav/>
     <div class="order col-lg-7">
-        <form method="post" action="/batch/addBatch">
+        <form method="post" action="/batch/addOrder">
             <div class="form-group">
                 <label for="exampleInputEmail1"></label>
                 <input required type="number" class="form-control" id="inputOrder" aria-describedby="emailHelp"
                        placeholder="Enter count product" name="count">
 
                 <input required type="text" class="form-control" id="inputOrder" aria-describedby="emailHelp"
-                       placeholder="Enter name company" name="company_name">
+                       placeholder="Enter name address" name="address">
 
-                <select name="id_product" class="form-control" size="1" required>
+                <select name="product" class="form-control" size="1" required>
                     <#list products as product>
                         <option value="${product.getId()}">${product.getProduct_name()}</option>
                     </#list>
@@ -46,7 +46,7 @@
             <thead>
             <tr>
                 <th scope="col">Id</th>
-                <th scope="col">Наименование компании</th>
+                <th scope="col">Адрес доставки</th>
                 <th scope="col">Список товаров</th>
                 <th scope="col">Стоимость заказа</th>
             </tr>
@@ -55,9 +55,9 @@
             <#list batches as batch>
                 <tr>
                     <th scope="row">${batch?index + 1}</th>
-                    <td>${batch[0]}</td>
-                    <td>${batch[1]}</td>
-                    <td>${batch[2]} тг</td>
+                    <td>${batch.address}</td>
+                    <td>${batch.product.getProduct_name()}: ${batch.amount}</td>
+                    <td>${batch.amount * batch.product.price} тг</td>
                 </tr>
             </#list>
             </tbody>

@@ -1,9 +1,9 @@
 package com.example.wms.wms.controllers;
 
-import com.example.wms.wms.entities.BatchEntity;
+import com.example.wms.wms.entities.OrderEntity;
 import com.example.wms.wms.entities.ProductEntity;
 import com.example.wms.wms.helpers.ExcelHelper;
-import com.example.wms.wms.repositories.BatchRepository;
+import com.example.wms.wms.repositories.OrderRepository;
 import com.example.wms.wms.repositories.ContainerRepository;
 import com.example.wms.wms.repositories.ProductRepository;
 import io.swagger.annotations.Api;
@@ -30,11 +30,11 @@ import java.util.TreeMap;
 public class DocumentController {
 
     private final ContainerRepository containerRepository;
-    private final BatchRepository batchRepository;
+    private final OrderRepository batchRepository;
     private final ProductRepository productRepository;
 
     public DocumentController(ContainerRepository containerRepository,
-                              BatchRepository batchRepository,
+                              OrderRepository batchRepository,
                               ProductRepository productRepository) {
         this.containerRepository = containerRepository;
         this.batchRepository = batchRepository;
@@ -53,16 +53,13 @@ public class DocumentController {
 
     @ApiOperation("Сгенерировать документацию к отгружаемому товару")
     @PostMapping("/docShippingProduct")
-    public HttpEntity<byte[]> docShippingProduct(@RequestParam String company_name) throws IOException {
+    public HttpEntity<byte[]> docShippingProduct(@RequestParam Long order_number) throws IOException {
         Map<Integer, Object[]> list = new TreeMap<>();
 
         list.put(0, new Object[]{"Id", "Name", "Id_container", "Count", "Price"});
-        for (BatchEntity batch : batchRepository.getBatchByCompanyName(company_name)) {
-            ProductEntity productEntity = productRepository.getOne(containerRepository.getOne(batch.getContainer_id()).getProduct_id());
-            double price = productEntity.getPrice();
-
-            list.put(batch.getId().intValue(), new Object[]{batch.getId().toString(), productEntity.getProduct_name(), batch.getContainer_id().toString(),
-                    batch.getCount(), String.valueOf(price * batch.getCount())});
+        for (OrderEntity order : batchRepository.getBatchByOrderNumber(order_number)) {
+            list.put(order.getId().intValue(), new Object[]{order.getId().toString(), order.getProduct().getProduct_name(),
+                    order.getAmount(), String.valueOf(order.getProduct().getPrice() * order.getAmount())});
         }
 
         File file = ExcelHelper.createExelFile(list);

@@ -2,12 +2,12 @@ package com.example.wms.wms.controllers;
 
 import com.example.wms.wms.base.BaseType;
 import com.example.wms.wms.entities.ContainerEntity;
-import com.example.wms.wms.entities.StillageEntity;
+import com.example.wms.wms.entities.CellEntity;
 import com.example.wms.wms.entities.TaskEntity;
 import com.example.wms.wms.entities.User;
 import com.example.wms.wms.repositories.ContainerRepository;
 import com.example.wms.wms.repositories.ProductRepository;
-import com.example.wms.wms.repositories.StillageRepository;
+import com.example.wms.wms.repositories.CellRepository;
 import com.example.wms.wms.repositories.TaskRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,12 +23,12 @@ import java.util.*;
 @RestController
 public class StoreProductsController {
     private final ContainerRepository containerRepository;
-    private final StillageRepository stillageRepository;
+    private final CellRepository stillageRepository;
     private final TaskRepository taskRepository;
     private final ProductRepository productRepository;
 
     public StoreProductsController(ContainerRepository containerRepository,
-                                   StillageRepository stillageRepository,
+                                   CellRepository stillageRepository,
                                    TaskRepository taskRepository,
                                    ProductRepository productRepository) {
         this.containerRepository = containerRepository;
@@ -47,7 +47,7 @@ public class StoreProductsController {
 
         for (ContainerEntity container : containerEntities) {
             containersInfo.add(new Object[]{container.getId(),
-                    productRepository.getOne(container.getProduct_id()).getProduct_name() + " " + container.getCount_product()
+                    container.getProduct().getProduct_name() + " " + container.getAmount()
                             + " шт., размеры " + container.getWidth() + "/" + container.getHeight() +
                             "/" + container.getLength() + " " + container.getWeight() + " кг."});
         }
@@ -56,9 +56,9 @@ public class StoreProductsController {
 
         List<Object[]> stillagesInfo = new ArrayList<>();
 
-        for (StillageEntity stillageEntity : stillageRepository.getLooseStillage()) {
-            stillagesInfo.add(new Object[]{stillageEntity.getId(), "Номер стеллажа " + stillageEntity.getStillage_index() +
-                    " , номер ячейки " + stillageEntity.getShelf_index() +
+        for (CellEntity stillageEntity : stillageRepository.getLooseStillage()) {
+            stillagesInfo.add(new Object[]{stillageEntity.getId(), "Номер стеллажа " + stillageEntity.getStillage() +
+                    " , номер ячейки " + stillageEntity.getShelf() +
                     " ,размеры ячейки " + stillageEntity.getWidth() + "/" + stillageEntity.getHeight() + "/" + stillageEntity.getLength() +
                     " ,максимальный вес " + stillageEntity.getMax_weight()});
         }
@@ -87,7 +87,7 @@ public class StoreProductsController {
                                         @RequestParam Long id_stillage) {
         ContainerEntity container = containerRepository.getOne(id_container);
 
-        if (container.getStillageId().equals(id_stillage)) {
+        if (container.getCellId().equals(id_stillage)) {
             containerRepository.updateLifeCyrcleById(id_container, BaseType.LifeCycle.storage);
             return ResponseEntity.ok("Товар на полке.");
         } else {
@@ -107,7 +107,7 @@ public class StoreProductsController {
     @PostMapping("/optimization")
     public ResponseEntity<?> makeOptimization() {
         StringBuilder info = new StringBuilder();
-        List<StillageEntity> stillageEntities = stillageRepository.findAll();
+        List<CellEntity> stillageEntities = stillageRepository.findAll();
 
         TaskEntity taskEntity = new TaskEntity();
         taskEntity.setCreated(new Date());
@@ -115,15 +115,15 @@ public class StoreProductsController {
 
         for (int i = 0; i < stillageEntities.size() - 1; i++) {
             List<ContainerEntity> containerEntities = containerRepository
-                    .getContainersByStillageId(stillageEntities.get(i).getId());
+                    .getContainersByCellId(stillageEntities.get(i).getId());
 
             if (containerEntities.size() != stillageEntities.get(i).getMax_count_object() && !containerEntities.isEmpty()) {
                 for (int j = i + 1; j < stillageEntities.size(); j++) {
                     List<ContainerEntity> containerEntities2 = containerRepository
-                            .getContainersByStillageId(stillageEntities.get(j).getId());
+                            .getContainersByCellId(stillageEntities.get(j).getId());
 
                     if (containerEntities2.isEmpty()) continue;
-                    if (!containerEntities2.get(0).getProduct_id().equals(containerEntities.get(0).getProduct_id())
+                    if (containerEntities2.get(0).getProduct() != (containerEntities.get(0).getProduct())
                             || !containerEntities2.get(0).getTypeContainer().equals(containerEntities.get(0).getTypeContainer()))
                         continue;
 
@@ -135,10 +135,10 @@ public class StoreProductsController {
                             for (ContainerEntity containerEntity : containerEntities2) {
 
                                 taskEntity.setTask(taskEntity.getTask() + "Контейнер с id = " +
-                                        containerEntity.getId() + "Переместить из стеллажа с номером " + stillageEntities.get(j).getStillage_index() +
-                                        " и ячейки " + stillageEntities.get(j).getShelf_index() +
-                                        " в стеллаж " + stillageEntities.get(i).getStillage_index() +
-                                        " и ячейку " + stillageEntities.get(i).getShelf_index() + "\n");
+                                        containerEntity.getId() + "Переместить из стеллажа с номером " + stillageEntities.get(j).getStillage() +
+                                        " и ячейки " + stillageEntities.get(j).getShelf() +
+                                        " в стеллаж " + stillageEntities.get(i).getStillage() +
+                                        " и ячейку " + stillageEntities.get(i).getShelf() + "\n");
 
                                 containerRepository.updateLifeCyrcleAndStillageById(containerEntity.getId(),
                                         BaseType.LifeCycle.distribution, stillageEntities.get(i).getId());
@@ -151,10 +151,10 @@ public class StoreProductsController {
 
                                 taskEntity.setTask(taskEntity.getTask() + "Контейнер с id = " +
                                         containerEntity.getId() + "Переместить из стеллажа с номером " +
-                                        stillageEntities.get(i).getStillage_index() +
-                                        " и ячейки " + stillageEntities.get(i).getShelf_index() +
-                                        " в стеллаж " + stillageEntities.get(j).getStillage_index() +
-                                        " и ячейку " + stillageEntities.get(j).getShelf_index() + "\n");
+                                        stillageEntities.get(i).getStillage() +
+                                        " и ячейки " + stillageEntities.get(i).getShelf() +
+                                        " в стеллаж " + stillageEntities.get(j).getStillage() +
+                                        " и ячейку " + stillageEntities.get(j).getShelf() + "\n");
 
                                 info.append("Контейнер с id = ").append(containerEntity.getId()).append(" был перемещен\n");
                             }

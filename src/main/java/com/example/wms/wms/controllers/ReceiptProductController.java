@@ -6,7 +6,7 @@ import com.example.wms.wms.entities.ProductEntity;
 import com.example.wms.wms.helpers.QRCodeHelper;
 import com.example.wms.wms.repositories.ContainerRepository;
 import com.example.wms.wms.repositories.ProductRepository;
-import com.example.wms.wms.repositories.StillageRepository;
+import com.example.wms.wms.repositories.CellRepository;
 import com.example.wms.wms.repositories.TaskRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +28,7 @@ public class ReceiptProductController {
 
     private final ProductRepository productRepository;
     private final ContainerRepository containerRepository;
-    private final StillageRepository stillageRepository;
+    private final CellRepository stillageRepository;
     private final TaskRepository taskRepository;
 
     @Value("${standard.pallet.length}")
@@ -43,7 +43,7 @@ public class ReceiptProductController {
     @Autowired
     public ReceiptProductController(ProductRepository productRepository,
                                     ContainerRepository containerRepository,
-                                    StillageRepository stillageRepository,
+                                    CellRepository stillageRepository,
                                     TaskRepository taskRepository) {
         this.productRepository = productRepository;
         this.containerRepository = containerRepository;
@@ -71,25 +71,22 @@ public class ReceiptProductController {
 
     @ApiOperation("Добавить коробку")
     @PostMapping("/addBox")
-    public ResponseEntity<?> addBox(@RequestParam(name = "id_product") long id_product,
+    public ResponseEntity<?> addBox(@RequestParam(name = "id_product") ProductEntity productEntity,
                                     @RequestParam(name = "height") double height,
                                     @RequestParam(name = "width") double width,
                                     @RequestParam(name = "length") double length,
                                     @RequestParam(name = "count") int count) {
-        ProductEntity productEntity = productRepository.getOne(id_product);
-
         ContainerEntity box = new ContainerEntity();
         box.setWeight(productEntity.getWeight() * count);
         box.setHeight(height);
         box.setWidth(width);
         box.setLength(length);
-        box.setProduct_id(id_product);
-        box.setCount_product(count);
-        box.setCount_product(count);
+        box.setProduct(productEntity);
+        box.setAmount(count);
         box.setLifeCycle(BaseType.LifeCycle.receipt);
         box.setTypeContainer(BaseType.TypeContainerProduct.box);
 
-        productRepository.updateById(id_product, productEntity.getCount_on_shipping(),
+        productRepository.updateById(productEntity.getId(), productEntity.getCount_on_shipping(),
                 productEntity.getCount_on_warehouse() + count);
 
         containerRepository.save(box);
@@ -110,18 +107,18 @@ public class ReceiptProductController {
 
     @ApiOperation("Упаковать продукты в паллет")
     @PostMapping("/makePallet")
-    public ResponseEntity<?> makePallet(@RequestParam long id_product,
+    public ResponseEntity<?> makePallet(@RequestParam ProductEntity product,
                                         @RequestParam int count_product,
                                         @RequestParam double height) {
-        ProductEntity productEntity = productRepository.getOne(id_product);
+
 
         ContainerEntity pallet = new ContainerEntity();
-        pallet.setCount_product(count_product);
-        pallet.setProduct_id(id_product);
+        pallet.setAmount(count_product);
+        pallet.setProduct(product);
         pallet.setTypeContainer(BaseType.TypeContainerProduct.pallet);
         pallet.setHeight(height);
 //        pallet.setHeight(height + standard_height);
-        pallet.setWeight(productEntity.getWeight() * count_product);
+        pallet.setWeight(product.getWeight() * count_product);
         pallet.setLifeCycle(BaseType.LifeCycle.receipt);
 
         pallet.setLength(standard_length);
@@ -129,16 +126,16 @@ public class ReceiptProductController {
         //Распределение палета
         containerRepository.save(pallet);
 
-        productRepository.updateById(id_product, productEntity.getCount_on_shipping(),
-                productEntity.getCount_on_warehouse() + count_product);
+        productRepository.updateById(product.getId(), product.getCount_on_shipping(),
+                product.getCount_on_warehouse() + count_product);
 
         return ResponseEntity.ok("Паллет добавлен в базу");
     }
 
 //    private boolean distribution(ContainerEntity container, long product_id) {
-//        List<StillageEntity> stillages = stillageRepository.findAll();
+//        List<CellEntity> stillages = stillageRepository.findAll();
 //
-//        for (StillageEntity stillage : stillages) {
+//        for (CellEntity stillage : stillages) {
 //            List<ContainerEntity> palletEntities = containerRepository.getContainersByStillageId(stillage.getId());
 //
 //            if (palletEntities.size() < stillage.getMax_count_object() && !palletEntities.isEmpty()) {
@@ -151,7 +148,7 @@ public class ReceiptProductController {
 //            }
 //        }
 //
-//        for (StillageEntity stillage : stillages) {
+//        for (CellEntity stillage : stillages) {
 //            List<ContainerEntity> palletEntities = containerRepository.getContainersByStillageId(stillage.getId());
 //
 //            if (palletEntities.isEmpty()) {

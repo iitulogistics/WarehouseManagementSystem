@@ -23,10 +23,6 @@
             <a href="stillage">
                 <div class="mainListContent">Стилажи</div>
             </a>
-
-            <a href="stillage">
-                <div class="mainListContent">Стилажи</div>
-            </a>
             <a href="task">
                 <div class="mainListContent">Задачи</div>
             </a>

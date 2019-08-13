@@ -39,4 +39,8 @@ public class BaseType {
         inProgress,
         done
     }
+
+    public enum Unit{
+        thing, kg
+    }
 }

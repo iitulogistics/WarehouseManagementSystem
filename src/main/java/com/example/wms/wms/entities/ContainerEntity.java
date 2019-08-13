@@ -11,12 +11,18 @@ public class ContainerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
-    @Column(name = "product_id")
-    Long product_id;
+
+    @JoinColumn(name = "product_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    ProductEntity product;
+
     @Column(name = "product_count")
-    int count_product;
-    @Column(name = "product_stillage_id")
-    Long stillageId;
+    int amount;
+
+    @JoinColumn(name = "cell_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    CellEntity cellId;
+
     @Column(name = "product_width")
     double width;
     @Column(name = "product_height")

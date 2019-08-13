@@ -1,6 +1,5 @@
 package com.example.wms.wms.helpers;
 
-import com.example.wms.wms.entities.BatchEntity;
 import com.example.wms.wms.entities.ProductEntity;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;

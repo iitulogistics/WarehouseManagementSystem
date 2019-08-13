@@ -27,6 +27,6 @@ public class TaskEntity {
     Date done;
 
     @JoinColumn(name = "usr_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     User user;
 }

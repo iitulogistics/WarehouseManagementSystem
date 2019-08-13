@@ -1,4 +1,4 @@
-package com.example.wms.wms;
+package com.example.wms.wms.services;
 
 import com.example.wms.wms.repositories.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;

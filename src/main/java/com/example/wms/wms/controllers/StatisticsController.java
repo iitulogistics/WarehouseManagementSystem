@@ -1,10 +1,10 @@
 package com.example.wms.wms.controllers;
 
+import com.example.wms.wms.entities.CellEntity;
 import com.example.wms.wms.entities.ProductEntity;
-import com.example.wms.wms.entities.StillageEntity;
 import com.example.wms.wms.entities.User;
 import com.example.wms.wms.repositories.ProductRepository;
-import com.example.wms.wms.repositories.StillageRepository;
+import com.example.wms.wms.repositories.CellRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +23,12 @@ import java.util.TreeMap;
 @Api(tags = "Статистика", description = "Api для выдачи статистики на складе")
 @RequestMapping("/statistics")
 public class StatisticsController {
-    private final StillageRepository stillageRepository;
+    private final CellRepository cellRepository;
     private final ProductRepository productRepository;
 
-    public StatisticsController(StillageRepository stillageRepository,
+    public StatisticsController(CellRepository stillageRepository,
                                 ProductRepository productRepository) {
-        this.stillageRepository = stillageRepository;
+        this.cellRepository = stillageRepository;
         this.productRepository = productRepository;
     }
 
@@ -36,11 +36,11 @@ public class StatisticsController {
     public ModelAndView main(@AuthenticationPrincipal User user) {
         Map<String, Object> root = new TreeMap<>();
 
-        List<StillageEntity> stillageEntities = stillageRepository.findAll();
+        List<CellEntity> stillageEntities = cellRepository.findAll();
         int looseStillage = 0,
                 withContainer = 0;
 
-        for (StillageEntity stillage : stillageEntities) {
+        for (CellEntity stillage : stillageEntities) {
             if (stillage.getCount_object() == 0) {
                 looseStillage++;
             } else if (stillage.getCount_object() != stillage.getMax_count_object()) {
@@ -60,11 +60,11 @@ public class StatisticsController {
     @ApiOperation("Вывод информации по стеллажам")
     @PostMapping("/stillageInfo")
     public ResponseEntity<?> getStillageInfo() {
-        List<StillageEntity> stillageEntities = stillageRepository.findAll();
+        List<CellEntity> stillageEntities = cellRepository.findAll();
         int looseStillage = 0,
                 withContainer = 0;
 
-        for (StillageEntity stillage : stillageEntities) {
+        for (CellEntity stillage : stillageEntities) {
             if (stillage.getCount_object() == 0) {
                 looseStillage++;
             } else if (stillage.getCount_object() != stillage.getMax_count_object()) {
@@ -81,7 +81,7 @@ public class StatisticsController {
 //    @ApiOperation("Вывод информации по стеллажам")
 //    @PostMapping("/countStillage")
 //    public ResponseEntity<?> getCountStillage(){
-//        return ResponseEntity.ok(stillageRepository.findAll().size());
+//        return ResponseEntity.ok(cellRepository.findAll().size());
 //    }
 //
 //    @ApiOperation("Вывод информации по стеллажам")
@@ -90,7 +90,7 @@ public class StatisticsController {
 //        int looseStillage = 0,
 //                withContainer = 0;
 //
-//        for(StillageEntity stillage : stillageRepository.getLooseStillage()){
+//        for(CellEntity stillage : cellRepository.getLooseStillage()){
 //            if (stillage.getCount_object() == 0) {
 //                looseStillage++;
 //            }

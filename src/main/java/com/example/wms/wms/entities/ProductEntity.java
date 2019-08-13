@@ -16,11 +16,15 @@ public class ProductEntity {
 	@Column(name = "product_name")
 	String product_name;
 	@Column(name = "product_count_in_warehouse")
-	int count_on_warehouse;
+	double count_on_warehouse;
 	@Column(name = "product_count_on_shipping")
-	int count_on_shipping;
+	double count_on_shipping;
 	@Column(name = "product_count_expected")
-	int count_expected;
+	double count_expected;
+
+	@Enumerated(EnumType.STRING)
+	BaseType.Unit unit;
+
 	@Column(name = "product_width")
 	double width;
 	@Column(name = "product_height")
@@ -38,7 +42,7 @@ public class ProductEntity {
 	BaseType.TypeProduct type_product;
 
 	@Column(name = "product_qr_code")
-	String qr_code;
+	String bar_code;
 
 	public ProductEntity(){
 	}
