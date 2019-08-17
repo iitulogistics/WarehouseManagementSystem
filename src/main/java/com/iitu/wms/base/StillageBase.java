@@ -1,11 +1,9 @@
 package com.iitu.wms.base;
 
-import lombok.Data;
 import org.hibernate.engine.jdbc.batch.spi.Batch;
 
 import java.util.Set;
 
-@Data
 public abstract class StillageBase {
     double weigh;
     double length, height, width;
