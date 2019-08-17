@@ -1,10 +1,7 @@
 package com.iitu.wms.controllers;
 
 import com.iitu.wms.base.BaseType;
-import com.iitu.wms.entities.ContainerEntity;
-import com.iitu.wms.entities.CellEntity;
-import com.iitu.wms.entities.TaskEntity;
-import com.iitu.wms.entities.User;
+import com.iitu.wms.entities.*;
 import com.iitu.wms.repositories.ContainerRepository;
 import com.iitu.wms.repositories.ProductRepository;
 import com.iitu.wms.repositories.CellRepository;
@@ -16,14 +13,16 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 @Api(tags = {"Хранение"}, description = "API контроля товара на складе")
 @RequestMapping("/store")
 @RestController
 public class StoreProductsController {
     private final ContainerRepository containerRepository;
-    private final CellRepository stillageRepository;
+    private final CellRepository cellRepository;
     private final TaskRepository taskRepository;
     private final ProductRepository productRepository;
 
@@ -32,7 +31,7 @@ public class StoreProductsController {
                                    TaskRepository taskRepository,
                                    ProductRepository productRepository) {
         this.containerRepository = containerRepository;
-        this.stillageRepository = stillageRepository;
+        this.cellRepository = stillageRepository;
         this.taskRepository = taskRepository;
         this.productRepository = productRepository;
     }
@@ -56,7 +55,7 @@ public class StoreProductsController {
 
         List<Object[]> stillagesInfo = new ArrayList<>();
 
-        for (CellEntity stillageEntity : stillageRepository.getLooseStillage()) {
+        for (CellEntity stillageEntity : cellRepository.getLooseStillage()) {
             stillagesInfo.add(new Object[]{stillageEntity.getId(), "Номер стеллажа " + stillageEntity.getStillage() +
                     " , номер ячейки " + stillageEntity.getShelf() +
                     " ,размеры ячейки " + stillageEntity.getWidth() + "/" + stillageEntity.getHeight() + "/" + stillageEntity.getLength() +
@@ -99,15 +98,16 @@ public class StoreProductsController {
     @PostMapping("/putOnShelfByIndexes")
     public ResponseEntity<?> putOnShelfByIndexes(@RequestParam Long id_container,
                                                  @RequestParam int stillage_index,
-                                                 @RequestParam int shelf_index) {
-        return putOnShelf(id_container, stillageRepository.getStillagesByIndexes(stillage_index, shelf_index).getId());
+                                                 @RequestParam int shelf_index,
+                                                 @RequestParam int cell_index) {
+        return putOnShelf(id_container, cellRepository.getCellByIndexes(stillage_index, shelf_index, cell_index).getId());
     }
 
     @ApiOperation("Оптимизация товара на складе")
     @PostMapping("/optimization")
     public ResponseEntity<?> makeOptimization() {
         StringBuilder info = new StringBuilder();
-        List<CellEntity> stillageEntities = stillageRepository.findAll();
+        List<CellEntity> stillageEntities = cellRepository.findAll();
 
         TaskEntity taskEntity = new TaskEntity();
         taskEntity.setCreated(new Date());
@@ -170,6 +170,28 @@ public class StoreProductsController {
             taskRepository.save(taskEntity);
             return ResponseEntity.ok(info);
         }
+    }
+
+    @PostMapping("/inventory")
+    public ResponseEntity<?> makeInventory() {
+        return ResponseEntity.ok("Функция еще не реализована");
+    }
+
+    @PostMapping("/getCellBalance")
+    public ResponseEntity<?> getCellBalance(@RequestParam String bar_code) {
+        return ResponseEntity.ok(containerRepository.getContainersByCellId(cellRepository.getCellByBarCode(bar_code).getId()));
+    }
+
+    @PostMapping("/getCellProduct")
+    public ResponseEntity<?> getCellProduct(@RequestParam String bar_code) {
+        return ResponseEntity.ok(productRepository.getProductByBarCode(bar_code));
+    }
+
+    @PostMapping()
+    public ResponseEntity<?> findCellsByProduct(@RequestParam String bar_code) {
+        ProductEntity productEntity = productRepository.getProductByBarCode(bar_code);
+        List<ContainerEntity> containerEntities = containerRepository.getContainersByProduct(productEntity);
+        return ResponseEntity.ok(containerEntities);
     }
 }
 

@@ -53,10 +53,23 @@ public class ReceiptProductController {
 
     @ApiOperation("Добавить продукт для дальнейшей упаковки в паллет")
     @PostMapping("/addOneProductForPallet")
-    public ResponseEntity<?> addOneProductForPallet(@RequestParam(name = "id_product") long id_product) {
+    public ResponseEntity<?> addOneProductForPallet(@RequestParam long id_product) {
         ProductEntity productEntity = productRepository.getOne(id_product);
         productRepository.updateById(id_product, productEntity.getCount_on_shipping(),
                 productEntity.getCount_on_warehouse() + 1);
+        return ResponseEntity.ok("Продукт добавлен в базу без контейнера.");
+    }
+
+    @ApiOperation("Добавить продукт для дальнейшей упаковки в паллет используя бар код")
+    @PostMapping("/addOneProductForPallet")
+    public ResponseEntity<?> addOneProductForPallet(@RequestParam String bar_code_product,
+                                                    @RequestParam String bar_code_pallet) {
+        ProductEntity product = productRepository.getProductByBarCode(bar_code_product);
+        ContainerEntity container = containerRepository.getContainersByBarCode(bar_code_pallet);
+        if (container.getProduct() == null) {
+            container.setProduct(product);
+        }
+        container.setAmount(container.getAmount() + 1);
         return ResponseEntity.ok("Продукт добавлен в базу без контейнера.");
     }
 
@@ -105,29 +118,45 @@ public class ReceiptProductController {
 //        return makePallet(id_product, count_product, height);
 //    }
 
+//    @ApiOperation("Упаковать продукты в паллет")
+//    @PostMapping("/makePallet")
+//    public ResponseEntity<?> makePallet(@RequestParam ProductEntity product,
+//                                        @RequestParam int count_product,
+//                                        @RequestParam double height) {
+//
+//
+//        ContainerEntity pallet = new ContainerEntity();
+//        pallet.setAmount(count_product);
+//        pallet.setProduct(product);
+//        pallet.setTypeContainer(BaseType.TypeContainerProduct.pallet);
+//        pallet.setHeight(height);
+////        pallet.setHeight(height + standard_height);
+//        pallet.setWeight(product.getWeight() * count_product);
+//        pallet.setLifeCycle(BaseType.LifeCycle.receipt);
+//
+//        pallet.setLength(standard_length);
+//        pallet.setWidth(standard_width);
+//        //Распределение палета
+//        containerRepository.save(pallet);
+//
+//        productRepository.updateById(product.getId(), product.getCount_on_shipping(),
+//                product.getCount_on_warehouse() + count_product);
+//
+//        return ResponseEntity.ok("Паллет добавлен в базу");
+//    }
+
     @ApiOperation("Упаковать продукты в паллет")
     @PostMapping("/makePallet")
-    public ResponseEntity<?> makePallet(@RequestParam ProductEntity product,
-                                        @RequestParam int count_product,
-                                        @RequestParam double height) {
-
-
+    public ResponseEntity<?> makePallet(@RequestParam String bar_code) {
         ContainerEntity pallet = new ContainerEntity();
-        pallet.setAmount(count_product);
-        pallet.setProduct(product);
+
+        pallet.setAmount(0);
         pallet.setTypeContainer(BaseType.TypeContainerProduct.pallet);
-        pallet.setHeight(height);
-//        pallet.setHeight(height + standard_height);
-        pallet.setWeight(product.getWeight() * count_product);
         pallet.setLifeCycle(BaseType.LifeCycle.receipt);
 
         pallet.setLength(standard_length);
         pallet.setWidth(standard_width);
-        //Распределение палета
         containerRepository.save(pallet);
-
-        productRepository.updateById(product.getId(), product.getCount_on_shipping(),
-                product.getCount_on_warehouse() + count_product);
 
         return ResponseEntity.ok("Паллет добавлен в базу");
     }
@@ -180,7 +209,6 @@ public class ReceiptProductController {
         containerRepository.updateLifeCyrcleAndStillageById(id_container, BaseType.LifeCycle.distribution, id_stillage);
         return ResponseEntity.ok("Палету присвоен стилаж");
     }
-
 
 
     @ApiOperation("генерировать qr code")

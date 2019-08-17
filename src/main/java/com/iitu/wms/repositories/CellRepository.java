@@ -23,10 +23,9 @@ public interface CellRepository extends JpaRepository<CellEntity, Long> {
     @Query("select s from CellEntity s where not s.max_count_object = s.count_object")
     List<CellEntity> getLooseStillage();
 
+    @Query("select s from CellEntity s where  s.stillage = ?1 and s.shelf = ?2 and s.cell = ?3")
+    CellEntity getCellByIndexes(int stillage_index, int shelf_index, int cell_index);
 
-    @Query("select s from CellEntity s where  s.stillage = ?1")
-    List<CellEntity> getStillagesByIndex(int index);
-
-    @Query("select s from CellEntity s where  s.stillage = ?1 and s.shelf = ?2")
-    CellEntity getStillagesByIndexes(int stillage_index, int shelf_index);
+    @Query("select s from CellEntity s where  s.bar_code = ?1")
+    CellEntity getCellByBarCode(String code);
 }

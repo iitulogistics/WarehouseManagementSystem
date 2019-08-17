@@ -12,7 +12,7 @@
             </form>
         </div>
         <div class="col-lg-12 inventorization">
-            <form action="" method="post">
+            <form action="/store/inventory" method="post">
                 <div class="form-group">
                     <input type="hidden" name="_csrf" value="${_csrf.token}"/>
                     <button type="submit" class="btn btn-primary">Произвести инвентаризацию склада</button>

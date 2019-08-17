@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
+
     @Modifying(clearAutomatically = true)
     @Transactional
     @Query("update ProductEntity p set p.count_on_shipping = ?2 , " +
@@ -20,4 +21,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
     @Query("select p from ProductEntity p where p.product_name like %?1%")
     List<ProductEntity> getProductLikeName(String name);
+
+    @Query("select  p from ProductEntity  p where  p.bar_code = ?1")
+    ProductEntity getProductByBarCode(String code);
 }

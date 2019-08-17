@@ -36,6 +36,8 @@ public class ContainerEntity {
     @Enumerated(EnumType.STRING)
     private BaseType.LifeCycle lifeCycle;
 
+    private String bar_code;
+
     public Long getId() {
         return id;
     }
@@ -114,5 +116,13 @@ public class ContainerEntity {
 
     public void setLifeCycle(BaseType.LifeCycle lifeCycle) {
         this.lifeCycle = lifeCycle;
+    }
+
+    public String getBar_code() {
+        return bar_code;
+    }
+
+    public void setBar_code(String bar_code) {
+        this.bar_code = bar_code;
     }
 }

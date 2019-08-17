@@ -30,6 +30,7 @@ public class CellEntity {
     private int max_count_object;
     @Column(name = "stillage_count_object")
     private int count_object;
+    private String bar_code;
 
     @ElementCollection(targetClass = BaseType.TypeProduct.class)
     @Enumerated(EnumType.STRING)
@@ -121,5 +122,13 @@ public class CellEntity {
 
     public void setTypeProduct(Collection<BaseType.TypeProduct> typeProduct) {
         this.typeProduct = typeProduct;
+    }
+
+    public String getBar_code() {
+        return bar_code;
+    }
+
+    public void setBar_code(String bar_code) {
+        this.bar_code = bar_code;
     }
 }

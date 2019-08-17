@@ -2,10 +2,12 @@ package com.iitu.wms.repositories;
 
 import com.iitu.wms.base.BaseType;
 import com.iitu.wms.entities.ContainerEntity;
+import com.iitu.wms.entities.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
+import schemasMicrosoftComOfficeOffice.STInsetMode;
 
 import java.util.List;
 
@@ -37,4 +39,11 @@ public interface ContainerRepository extends JpaRepository<ContainerEntity, Long
 
     @Query("select c from ContainerEntity c where c.lifeCycle = ?1")
     List<ContainerEntity> getContainerByLifeCycle(BaseType.LifeCycle lifeCycle);
+
+    @Query("select c from ContainerEntity c where c.bar_code = ?1")
+    ContainerEntity getContainersByBarCode(String code);
+
+
+    @Query("select c from ContainerEntity c where c.product = ?1")
+    List<ContainerEntity> getContainersByProduct(ProductEntity productEntity);
 }
