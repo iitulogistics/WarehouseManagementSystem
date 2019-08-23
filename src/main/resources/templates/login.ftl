@@ -5,7 +5,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-6 offset-lg-3">
-                <@l.login path="/login" title="Hefasdasd"/>
+                <@l.login path="/login" title="Авторизоваться"/>
                 <a href="/registration">Registration</a>
             </div>
         </div>
