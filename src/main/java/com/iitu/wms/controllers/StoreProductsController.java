@@ -111,7 +111,7 @@ public class StoreProductsController {
 
         TaskEntity taskEntity = new TaskEntity();
         taskEntity.setCreated(new Date());
-        taskEntity.setPriority(BaseType.PriorityOfExecution.midle);
+        taskEntity.setPriority(BaseType.PriorityOfExecution.middle);
 
         for (int i = 0; i < stillageEntities.size() - 1; i++) {
             List<ContainerEntity> containerEntities = containerRepository
@@ -187,7 +187,7 @@ public class StoreProductsController {
         return ResponseEntity.ok(productRepository.getProductByBarCode(bar_code));
     }
 
-    @PostMapping()
+    @PostMapping("/findCellsByProduct")
     public ResponseEntity<?> findCellsByProduct(@RequestParam String bar_code) {
         ProductEntity productEntity = productRepository.getProductByBarCode(bar_code);
         List<ContainerEntity> containerEntities = containerRepository.getContainersByProduct(productEntity);

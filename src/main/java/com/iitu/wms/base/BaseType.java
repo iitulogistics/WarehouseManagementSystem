@@ -30,9 +30,9 @@ public class BaseType {
     public enum PriorityOfExecution {
         low,
 
-        midle,
+        middle,
 
-        hight
+        high
     }
 
     public enum StageOfExecution{

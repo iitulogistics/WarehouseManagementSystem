@@ -61,7 +61,7 @@ public class ReceiptProductController {
     }
 
     @ApiOperation("Добавить продукт для дальнейшей упаковки в паллет используя бар код")
-    @PostMapping("/addOneProductForPallet")
+    @PostMapping("/addOneProductForPalletByCode")
     public ResponseEntity<?> addOneProductForPallet(@RequestParam String bar_code_product,
                                                     @RequestParam String bar_code_pallet) {
         ProductEntity product = productRepository.getProductByBarCode(bar_code_product);
