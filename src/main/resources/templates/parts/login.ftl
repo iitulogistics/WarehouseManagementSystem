@@ -11,7 +11,7 @@
             <input required type="password" class="form-control" id="inputOrder" aria-describedby="emailHelp"
                    placeholder="Enter password" name="password">
 
-            <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+<#--            <input type="hidden" name="_csrf" value="${_csrf.token}"/>-->
         </div>
 
         <button type="submit" class="btn btn-primary" value="Sign In">Sign In</button>

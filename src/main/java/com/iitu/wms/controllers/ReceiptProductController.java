@@ -62,15 +62,25 @@ public class ReceiptProductController {
 
     @ApiOperation("Добавить продукт для дальнейшей упаковки в паллет используя бар код")
     @PostMapping("/addOneProductForPalletByCode")
-    public ResponseEntity<?> addOneProductForPallet(@RequestParam String bar_code_product,
-                                                    @RequestParam String bar_code_pallet) {
-        ProductEntity product = productRepository.getProductByBarCode(bar_code_product);
-        ContainerEntity container = containerRepository.getContainersByBarCode(bar_code_pallet);
-        if (container.getProduct() == null) {
-            container.setProduct(product);
+    public ResponseEntity<?> addProductForPallet(@RequestParam String bar_code_product,
+                                                 @RequestParam String bar_code_pallet,
+                                                 @RequestParam int amount) {
+        ProductEntity product = productRepository.getProductByBarCode(bar_code_product).orElse(null);
+
+        ContainerEntity container = containerRepository.getContainersByBarCode(bar_code_pallet).orElse(null);
+
+        if (container == null) {
+            makePallet(bar_code_pallet);
+            container = containerRepository.getContainersByBarCode(bar_code_pallet).orElse(null);
         }
-        container.setAmount(container.getAmount() + 1);
-        return ResponseEntity.ok("Продукт добавлен в базу без контейнера.");
+
+        container.setProduct(product);
+        container.setAmount(amount);
+        containerRepository.save(container);
+
+        product.setCount_on_warehouse(product.getCount_on_warehouse() + amount);
+        productRepository.save(product);
+        return ResponseEntity.ok("Продукт добавлен в базу.");
     }
 
 //    @ApiOperation("Дефектную коробку товара")
@@ -156,6 +166,7 @@ public class ReceiptProductController {
 
         pallet.setLength(standard_length);
         pallet.setWidth(standard_width);
+        pallet.setBar_code(bar_code);
         containerRepository.save(pallet);
 
         return ResponseEntity.ok("Паллет добавлен в базу");

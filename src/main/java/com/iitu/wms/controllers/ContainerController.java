@@ -40,4 +40,12 @@ public class ContainerController {
         }
         return ResponseEntity.ok("Товар взят");
     }
+
+    @ApiOperation("Контейнер по бар коду")
+    @PostMapping("getContainerByBarcode")
+    public ResponseEntity<?> getContainerByBarcode(String barcode) {
+        ContainerEntity containerEntity = containerRepository.getContainersByBarCode(barcode).orElse(null);
+        if (containerEntity == null) return ResponseEntity.ok("null");
+        return ResponseEntity.ok(containerEntity);
+    }
 }

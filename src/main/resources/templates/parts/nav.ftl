@@ -5,7 +5,7 @@
         </div>
 
         <div class="col-lg-7 mainList">
-            <a href="/product">
+            <a href="product">
                 <div class="mainListContent">Продукты</div>
             </a>
             <a href="statistics">
@@ -33,7 +33,7 @@
                 <p class="text-muted">User: ${user.username}</p>
                 <form action="/logout" method="post">
                     <div style="margin-left: 10px;">
-                        <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+<#--                        <input type="hidden" name="_csrf" value="${_csrf.token}"/>-->
                         <button type="submit" class="btn btn-primary">Logout</button>
                     </div>
                 </form>

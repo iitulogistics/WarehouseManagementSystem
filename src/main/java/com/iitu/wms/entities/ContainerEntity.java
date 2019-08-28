@@ -11,14 +11,14 @@ public class ContainerEntity {
     private Long id;
 
     @JoinColumn(name = "product_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private ProductEntity product;
 
     @Column(name = "product_count")
     private int amount;
 
     @JoinColumn(name = "cell_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private CellEntity cellId;
 
     @Column(name = "product_width")

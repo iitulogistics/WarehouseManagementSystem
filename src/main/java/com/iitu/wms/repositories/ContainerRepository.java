@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import schemasMicrosoftComOfficeOffice.STInsetMode;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ContainerRepository extends JpaRepository<ContainerEntity, Long> {
 
@@ -41,7 +42,7 @@ public interface ContainerRepository extends JpaRepository<ContainerEntity, Long
     List<ContainerEntity> getContainerByLifeCycle(BaseType.LifeCycle lifeCycle);
 
     @Query("select c from ContainerEntity c where c.bar_code = ?1")
-    ContainerEntity getContainersByBarCode(String code);
+    Optional<ContainerEntity> getContainersByBarCode(String code);
 
 
     @Query("select c from ContainerEntity c where c.product = ?1")

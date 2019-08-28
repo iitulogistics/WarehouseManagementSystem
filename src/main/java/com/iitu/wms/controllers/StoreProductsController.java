@@ -178,18 +178,24 @@ public class StoreProductsController {
     }
 
     @PostMapping("/getCellBalance")
-    public ResponseEntity<?> getCellBalance(@RequestParam String bar_code) {
-        return ResponseEntity.ok(containerRepository.getContainersByCellId(cellRepository.getCellByBarCode(bar_code).getId()));
+    public ResponseEntity<?> getCellBalance(@RequestParam String barcode) {
+        List<ContainerEntity> entity;
+        try {
+           entity = containerRepository.getContainersByCellId(cellRepository.getCellByBarCode(barcode).getId());
+        }catch (Exception e){
+            return ResponseEntity.ok("null");
+        }
+        return ResponseEntity.ok(entity);
     }
 
     @PostMapping("/getCellProduct")
-    public ResponseEntity<?> getCellProduct(@RequestParam String bar_code) {
-        return ResponseEntity.ok(productRepository.getProductByBarCode(bar_code));
+    public ResponseEntity<?> getCellProduct(@RequestParam String barcode) {
+        return ResponseEntity.ok(productRepository.getProductByBarCode(barcode));
     }
 
     @PostMapping("/findCellsByProduct")
     public ResponseEntity<?> findCellsByProduct(@RequestParam String bar_code) {
-        ProductEntity productEntity = productRepository.getProductByBarCode(bar_code);
+        ProductEntity productEntity = productRepository.getProductByBarCode(bar_code).orElse(null);
         List<ContainerEntity> containerEntities = containerRepository.getContainersByProduct(productEntity);
         return ResponseEntity.ok(containerEntities);
     }

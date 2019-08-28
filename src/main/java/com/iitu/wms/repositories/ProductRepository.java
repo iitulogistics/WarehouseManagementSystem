@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
@@ -23,5 +24,5 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     List<ProductEntity> getProductLikeName(String name);
 
     @Query("select  p from ProductEntity  p where  p.bar_code = ?1")
-    ProductEntity getProductByBarCode(String code);
+    Optional<ProductEntity> getProductByBarCode(String code);
 }

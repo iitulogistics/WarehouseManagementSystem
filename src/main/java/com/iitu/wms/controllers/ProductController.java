@@ -12,6 +12,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -64,7 +66,7 @@ public class ProductController {
                                                @RequestParam(name = "height") double height,
                                                @RequestParam(name = "weight") double weight,
                                                @RequestParam(name = "price") double price,
-                                               @RequestParam(name = "type_product") BaseType.TypeProduct product) {
+                                               @RequestParam(name = "type_product") BaseType.TypeProduct product) throws URISyntaxException {
         ProductEntity productEntity = new ProductEntity();
         productEntity.setProduct_name(productName);
         productEntity.setLength(length);
@@ -73,7 +75,8 @@ public class ProductController {
         productEntity.setWeight(weight);
         productEntity.setPrice(price);
         productEntity.setType_product(product);
-        return addProduct(productEntity);
+        return ResponseEntity
+                .created(new URI("/product")).build();
     }
 
 
@@ -93,6 +96,14 @@ public class ProductController {
     @PostMapping("/getProductLikeName")
     public List<ProductEntity> getProductLikeName(@RequestParam String name) {
         return repository.getProductLikeName(name);
+    }
+
+    @ApiOperation("Показать продукт по barcode")
+    @PostMapping("/getProductByBarcode")
+    public ResponseEntity<?> getProductByBarcode(@RequestParam String barcode) {
+        ProductEntity productEntity = repository.getProductByBarCode(barcode).orElse(null);
+        if(productEntity == null) return ResponseEntity.ok("null");
+        return ResponseEntity.ok(productEntity);
     }
 
     @ApiOperation("Удалить продукт")

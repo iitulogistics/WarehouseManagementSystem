@@ -19,7 +19,7 @@
                 </select>
 
             </div>
-            <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+<#--            <input type="hidden" name="_csrf" value="${_csrf.token}"/>-->
             <button type="submit" class="btn btn-primary">Сделать заказ</button>
         </form>
     </div>
@@ -36,7 +36,7 @@
                         сформирован заказ
                     </small>
                 </div>
-                <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+<#--                <input type="hidden" name="_csrf" value="${_csrf.token}"/>-->
                 <button type="submit" class="btn btn-primary">Поиск</button>
             </form>
         </div>

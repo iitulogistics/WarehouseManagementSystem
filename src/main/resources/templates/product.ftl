@@ -9,7 +9,7 @@
         <div class="">
             <h2>Список товаров</h2>
             <div class="search_form">
-                <form method="post">
+                <form method="get">
                     <div class="form-group">
                         <label for="search_prod_by_name1">Наименование товара</label>
                         <#--                      ${last_search}-->
@@ -21,7 +21,7 @@
                             поиска
                         </small>
                     </div>
-                    <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+<#--                    <input type="hidden" name="_csrf" value="${_csrf.token}"/>-->
                     <button type="submit" class="btn btn-primary">Поиск</button>
                 </form>
             </div>

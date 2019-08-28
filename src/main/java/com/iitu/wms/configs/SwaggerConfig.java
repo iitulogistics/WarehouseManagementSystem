@@ -16,7 +16,7 @@ public class SwaggerConfig {
 		return new Docket(DocumentationType.SWAGGER_2)
 				.useDefaultResponseMessages(false)
 				.select()
-				.apis(RequestHandlerSelectors.basePackage("com.example.wms.wms.controllers"))
+				.apis(RequestHandlerSelectors.basePackage("com.iitu.wms.controllers"))
 				.build();
 	}
 }

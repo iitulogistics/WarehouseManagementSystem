@@ -29,7 +29,7 @@
                                 <td>${task.getPriority()}</td>
                                 <td>
                                     <form action="/task/done" method="post">
-                                        <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+<#--                                        <input type="hidden" name="_csrf" value="${_csrf.token}"/>-->
                                         <input type="hidden" value="${task.getId()}" name="id">
                                         <button class="btn btn-primary" type="submit">Выполненно</button>
                                     </form>
@@ -73,7 +73,7 @@
                             <#else>
                                 <td>
                                     <form action="/task/takeTask" method="post">
-                                        <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+<#--                                        <input type="hidden" name="_csrf" value="${_csrf.token}"/>-->
                                         <input type="hidden" value="${task.getId()}" name="task_id">
                                         <button class="btn btn-primary" type="submit">Взять</button>
                                     </form>

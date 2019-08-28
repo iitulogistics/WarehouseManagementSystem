@@ -23,6 +23,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/", "/registration").permitAll()
+                .antMatchers("/", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -30,16 +31,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .logout()
-                .permitAll();
+                .permitAll().and().httpBasic();
 
-//        http.csrf().disable().
-//                authorizeRequests()
-////                .antMatchers(HttpMethod.POST)
-////                .permitAll()
-//                .antMatchers("/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**")
-//                .permitAll();
-
-       // http.headers().frameOptions().disable();
+        http.csrf().disable();
     }
 
     @Override
