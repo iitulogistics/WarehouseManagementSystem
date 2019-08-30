@@ -4,10 +4,9 @@ import com.iitu.wms.entities.Role;
 import com.iitu.wms.entities.User;
 import com.iitu.wms.repositories.UserRepository;
 import io.swagger.annotations.Api;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Collections;
@@ -42,5 +41,13 @@ public class RegistrationController {
         userRepo.save(user);
 
         return new ModelAndView("redirect:/login");
+    }
+
+    @PostMapping("isUserPresent")
+    public ResponseEntity<?> isUserPresent(@RequestParam String username,
+                                           @RequestParam String password) {
+        User user = userRepo.findByUsernameAndPassword(username, password).orElse(null);
+        if (user == null) return ResponseEntity.ok("false");
+        return ResponseEntity.ok("true");
     }
 }

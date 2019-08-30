@@ -22,8 +22,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
+                .antMatchers("/", "/registration/*").permitAll()
                 .antMatchers("/", "/registration").permitAll()
-                .antMatchers("/", "/swagger-ui.html").permitAll()
+//                .antMatchers("/", "/swagger-ui.html").permitAll()
+//                .antMatchers("/", "/swagger-ui.html/*").permitAll()
+//                .antMatchers("/", "/swagger-ui.html").anonymous()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

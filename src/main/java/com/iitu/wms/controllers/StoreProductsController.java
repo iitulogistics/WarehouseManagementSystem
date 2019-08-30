@@ -82,26 +82,27 @@ public class StoreProductsController {
 
     @ApiOperation("Поставить на полку")
     @PostMapping("/putOnShelf")
-    public ResponseEntity<?> putOnShelf(@RequestParam Long id_container,
-                                        @RequestParam Long id_stillage) {
-        ContainerEntity container = containerRepository.getOne(id_container);
+    public ResponseEntity<?> putOnShelf(@RequestParam String id_container,
+                                        @RequestParam String id_stillage) {
+        ContainerEntity container = containerRepository.getContainersByBarCode(id_container).orElse(null);
+        if (container == null) return null;
 
-        if (container.getCellId().equals(id_stillage)) {
-            containerRepository.updateLifeCyrcleById(id_container, BaseType.LifeCycle.storage);
+        if (container.getCellId().getBar_code().equals(id_stillage)) {
+            containerRepository.updateLifeCyrcleById(container.getId(), BaseType.LifeCycle.storage);
             return ResponseEntity.ok("Товар на полке.");
         } else {
             return ResponseEntity.ok("Эта полка не для этого товара");
         }
     }
 
-    @ApiOperation("Поставить на полку")
-    @PostMapping("/putOnShelfByIndexes")
-    public ResponseEntity<?> putOnShelfByIndexes(@RequestParam Long id_container,
-                                                 @RequestParam int stillage_index,
-                                                 @RequestParam int shelf_index,
-                                                 @RequestParam int cell_index) {
-        return putOnShelf(id_container, cellRepository.getCellByIndexes(stillage_index, shelf_index, cell_index).getId());
-    }
+//    @ApiOperation("Поставить на полку")
+//    @PostMapping("/putOnShelfByIndexes")
+//    public ResponseEntity<?> putOnShelfByIndexes(@RequestParam Long id_container,
+//                                                 @RequestParam int stillage_index,
+//                                                 @RequestParam int shelf_index,
+//                                                 @RequestParam int cell_index) {
+//        return putOnShelf(id_container, cellRepository.getCellByIndexes(stillage_index, shelf_index, cell_index).getId());
+//    }
 
     @ApiOperation("Оптимизация товара на складе")
     @PostMapping("/optimization")

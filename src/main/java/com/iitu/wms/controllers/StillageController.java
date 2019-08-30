@@ -3,9 +3,9 @@ package com.iitu.wms.controllers;
 import com.iitu.wms.base.BaseType;
 import com.iitu.wms.entities.CellEntity;
 import com.iitu.wms.entities.User;
+import com.iitu.wms.repositories.CellRepository;
 import com.iitu.wms.repositories.ContainerRepository;
 import com.iitu.wms.repositories.ProductRepository;
-import com.iitu.wms.repositories.CellRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,5 +110,10 @@ public class StillageController {
     @PostMapping("/getLooseStillage")
     public List<CellEntity> getLooseStillage() {
         return repository.getLooseStillage();
+    }
+
+    @PostMapping("getCellByBarcode")
+    public CellEntity getCellByBarcode(@RequestParam String barcode){
+        return repository.getCellByBarCode(barcode);
     }
 }
